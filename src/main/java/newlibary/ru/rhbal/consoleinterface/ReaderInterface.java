@@ -5,6 +5,7 @@
  */
 package newlibary.ru.rhbal.consoleinterface;
 
+import java.sql.SQLException;
 import java.util.Scanner;
 import newlibary.ru.rhbal.dao.exception.UserAlreadyExistException;
 import newlibary.ru.rhbal.facade.Facade;
@@ -17,13 +18,15 @@ public class ReaderInterface {
 
     private Facade facade;
     private Scanner scanner;
+    private GetterAll getterAll;
 
     public ReaderInterface() {
         facade = new Facade();
         scanner = new Scanner(System.in);
+        getterAll=new GetterAll(facade);
     }
 
-    public void working() {
+    public void working() throws SQLException {
         boolean end=false;
         while (!end) {
             System.out.println("Вы можете:\n1.Добавить читателя\n2.Удалить читателя\n3.Изменить читателя\n4.Вывести всех читателей\n0.Вернуться на предыдущий экран");
@@ -39,7 +42,7 @@ public class ReaderInterface {
                     edit();
                     break;
                 case "4":
-                    getAll();
+                    getterAll.getAllReader();
                     break;
                 case "0":
                     end=true;
@@ -50,14 +53,14 @@ public class ReaderInterface {
         }
     }
 
-    private void create() {
-        System.out.println("Введите Фамилию: ");
+    private void create() throws SQLException {
+        System.out.println("Введите Фамилию читателя: ");
         String lastName = scanner.nextLine();
-        System.out.println("Введите Имя: ");
+        System.out.println("Введите Имя читателя: ");
         String firstName = scanner.nextLine();
-        System.out.println("Введите Отчество: ");
+        System.out.println("Введите Отчество читателя: ");
         String surname = scanner.nextLine();
-        System.out.println("Введите Возраст: ");
+        System.out.println("Введите возраст читателя: ");
         int age = scanner.nextInt();
         try {
             facade.createAccount(lastName, firstName, surname, age);
@@ -66,34 +69,27 @@ public class ReaderInterface {
         }
     }
 
-    private void delete() {
-        System.out.println("Выберите номер пользователя, которого хотите удалить: ");
-        getAll();
-        int number= scanner.nextInt()-1;
+    private void delete() throws SQLException {
+        System.out.println("Введите номер читателя, которого хотите удалить: ");
+        getterAll.getAllReader();
+        int number= scanner.nextInt();
         facade.deleteAccount(number);
     }
 
-    private void edit() {
-        System.out.println("Выберите номер пользователя, которого хотите изменить: ");
-        getAll();
-        int number= scanner.nextInt()-1;
-        System.out.println("Введите новую Фамилию: ");
+    private void edit() throws SQLException {
+        System.out.println("Введите номер читателя, которого хотите изменить: ");
+        getterAll.getAllReader();
+        int number= scanner.nextInt();
+        System.out.println("Введите новую Фамилию читателя: ");
         String newLastName = scanner.nextLine();
-        System.out.println("Введите новое Имя: ");
+        System.out.println("Введите новое Имя читателя: ");
         String newFirstName = scanner.nextLine();
-        System.out.println("Введите новое Отчество: ");
+        System.out.println("Введите новое Отчество читателя: ");
         String newSurname = scanner.nextLine();
-        System.out.println("Введите другой Возраст: ");
+        System.out.println("Введите новый возраст читателя: ");
         int newAge = scanner.nextInt();
         facade.editAccount(number, newLastName, newFirstName, newSurname, newAge);
     }
 
-    private void getAll() {
-        for (int i = 0; i < facade.getAllAccounts().size(); i++) {
-            System.out.println((i + 1) + " Фамилия: " + facade.getAllAccounts().get(i).getReader().getLastName()
-                    + " Имя: " + facade.getAllAccounts().get(i).getReader().getFirstName() + " Отчество: "
-                    + facade.getAllAccounts().get(i).getReader().getFirstName() + " Возраст: "
-                    + facade.getAllAccounts().get(i).getReader().getAge());
-        }
-    }
+    
 }

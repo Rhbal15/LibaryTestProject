@@ -10,7 +10,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import newlibary.ru.rhbal.start.LibaryStart;
+import newlibary.ru.rhbal.libaryproject.NewLibary;
 
 /**
  *
@@ -28,13 +28,11 @@ public class Connector {
             Class.forName(DRIVER_CLASS);
         } catch (ClassNotFoundException ex) {
             System.err.println("Не удалось найти дирайвер");
-            Logger.getLogger(LibaryStart.class.getName()).log(Level.SEVERE, null, ex);
         }
         try {
             dbConnection=DriverManager.getConnection(DATA_BASE_URL,DATA_BASE_USER_NAME,DATA_BASE_PASSWORD);
         } catch (SQLException ex) {
             System.err.println("Не удалось подключится к базе данных");
-            Logger.getLogger(LibaryStart.class.getName()).log(Level.SEVERE, null, ex);
         }
         return dbConnection;
     }

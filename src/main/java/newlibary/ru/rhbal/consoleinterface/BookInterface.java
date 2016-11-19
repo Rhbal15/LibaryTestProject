@@ -5,6 +5,7 @@
  */
 package newlibary.ru.rhbal.consoleinterface;
 
+import java.sql.SQLException;
 import java.util.Scanner;
 import newlibary.ru.rhbal.facade.Facade;
 
@@ -15,13 +16,15 @@ import newlibary.ru.rhbal.facade.Facade;
 public class BookInterface {
     private Facade facade;
     private Scanner scanner;
+    private GetterAll getterAll;
 
     public BookInterface() {
         facade = new Facade();
         scanner = new Scanner(System.in);
+        getterAll=new GetterAll(facade);
     }
 
-    public void working() {
+    public void working() throws SQLException {
         boolean end=false;
         while (!end) {
             System.out.println("Вы можете:\n1.Добавить книгу\n2.Удалить книгу\n3.Изменить книгу\n4.Вывести все книги находящиеся в библиотеке\n0.Вернуться на предыдущий экран");
@@ -37,7 +40,7 @@ public class BookInterface {
                     edit();
                     break;
                 case "4":
-                    getAll();
+                    getterAll.getAllBook();
                     break;
                 case "0":
                     end=true;
@@ -48,30 +51,29 @@ public class BookInterface {
         }
     }
 
-    private void create() {
+    private void create() throws SQLException {
         System.out.println("Введите название Книги: ");
         String name = scanner.nextLine();
         System.out.println("Введите год выпуска книги: ");
         int release = scanner.nextInt();
         System.out.println("Введите Жанр книги: ");
         String genre = scanner.nextLine();
-        System.out.println("Введите имя Автора ");
-        String authorName = scanner.nextLine();
-        System.out.println("Введите год рождения Автора ");
-        int authorYear=scanner.nextInt();
-        facade.addBook(name, release, genre, authorName, authorYear);
+        getterAll.getAllAuthor();
+        System.out.println("Выберите Автора: ");
+        int authorId = scanner.nextInt();
+        facade.addBook(name, release, genre, authorId);
     }
 
-    private void delete() {
+    private void delete() throws SQLException {
         System.out.println("Введите книгу, которую хотите удалить: ");
-        getAll();
+        getterAll.getAllBook();
         int number= scanner.nextInt()-1;
         facade.deleteBook(number);
     }
 
-    private void edit() {
+    private void edit() throws SQLException {
         System.out.println("Введите книгу, которую  хотите изменить: ");
-        getAll();
+        getterAll.getAllBook();
         int number= scanner.nextInt()-1;
         System.out.println("Введите новое название Книги: ");
         String name = scanner.nextLine();
@@ -79,19 +81,11 @@ public class BookInterface {
         int release = scanner.nextInt();
         System.out.println("Введите Жанр книги: ");
         String genre = scanner.nextLine();
+        getterAll.getAllAuthor();
         System.out.println("Введите имя Автора ");
-        String authorName = scanner.nextLine();
-        System.out.println("Введите год рождения Автора ");
-        int authorYear=scanner.nextInt();
-        facade.editBook(number, name, release, genre, authorName, authorYear);
+        int authorId = scanner.nextInt();
+        facade.editBook(number, name, release, genre, authorId);
     }
 
-    private void getAll() {
-        for (int i = 0; i < facade.getAllBook().size(); i++) {
-            System.out.println((i+1)+" Название:"+facade.getAllBook().get(i).getName()+
-                    " Автор: "+facade.getAllBook().get(i).getAuthor().getName()+
-                    " Жанр: "+facade.getAllBook().get(i).getGenre()+
-                    " Год выпуска: "+facade.getAllBook().get(i).getRelease());
-        }
-    }
+    
 }

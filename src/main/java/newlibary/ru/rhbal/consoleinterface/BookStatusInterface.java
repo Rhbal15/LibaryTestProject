@@ -5,6 +5,7 @@
  */
 package newlibary.ru.rhbal.consoleinterface;
 
+import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Scanner;
@@ -22,13 +23,15 @@ public class BookStatusInterface {
 
     private Facade facade;
     private Scanner scanner;
+    private GetterAll getterAll;
 
     public BookStatusInterface() {
         facade = new Facade();
         scanner = new Scanner(System.in);
+        getterAll= new GetterAll(facade);
     }
     
-    public void working(){
+    public void working() throws SQLException{
          boolean end=false;
         while (!end) {
             System.out.println("Вы можете:\n1.Записать, что читатель взял книгу\n2.Записать, что читатель вернул книгу\n3.Вывести все учетрные записи пользователя\n0.Вернуться на предыдущий экран");
@@ -52,13 +55,13 @@ public class BookStatusInterface {
         }
     }
     
-    public void getBook(){
+    public void getBook() throws SQLException{
         System.out.println("Выберите читателя, который взял книгу");
-        getAllReader();
-        int numberReader= scanner.nextInt()-1;
+        getterAll.getAllReader();
+        int numberReader= scanner.nextInt();
         System.out.println("Выберите книгу, которую он взял");
-        getAllBook();
-        int numberBook= scanner.nextInt()-1;
+        getterAll.getAllBook();
+        int numberBook= scanner.nextInt();
         System.out.println("Выберите год, в который требуется вернуть книгу");
         int year= scanner.nextInt();
         System.out.println("Выберите месяц, в который требуется вернуть книгу");
@@ -72,24 +75,24 @@ public class BookStatusInterface {
         }
     }
     
-    public void putBook(){
+    public void putBook() throws SQLException{
         System.out.println("Выберите читателя, который взял книгу");
-        getAllReader();
-        int numberReader= scanner.nextInt()-1;
+        getterAll.getAllReader();
+        int numberReader= scanner.nextInt();
         System.out.println("Выберите книгу, которую он взял");
-        int numberBook= scanner.nextInt()-1;
-        getAllBook();
+        int numberBook= scanner.nextInt();
+        getterAll.getAllBook();
         try {
-            facade.putBook(numberReader,numberBook);
+            facade.putBook(numberBook);
         } catch (BookInTakenNotFoundException ex) {
             System.out.println("Книга уже была взята");
         }
     }
     
-    public void getBookStatuses(){
+    public void getBookStatuses() throws SQLException{
         System.out.println("Выберите читателя");
-        getAllReader();
-        int numberReader= scanner.nextInt()-1;
+        getterAll.getAllReader();
+        int numberReader= scanner.nextInt();
         
         for(int i=0;i<facade.getBookStatuses(numberReader).size();i++){
             System.out.println(i+1+" Взятая книга: "+facade.getBookStatuses(numberReader).get(i).getBook().getName()+
@@ -100,24 +103,6 @@ public class BookStatusInterface {
                     " "+facade.getBookStatuses(numberReader).get(i).getMustBeReturned().get(Calendar.MONTH)+
                     " "+facade.getBookStatuses(numberReader).get(i).getMustBeReturned().get(Calendar.DAY_OF_MONTH));
                     
-        }
-    }
-    
-    private void getAllBook() {
-        for (int i = 0; i < facade.getAllBook().size(); i++) {
-            System.out.println((i+1)+" Название:"+facade.getAllBook().get(i).getName()+
-                    " Автор: "+facade.getAllBook().get(i).getAuthor().getName()+
-                    " Жанр: "+facade.getAllBook().get(i).getGenre()+
-                    " Год выпуска: "+facade.getAllBook().get(i).getRelease());
-        }
-    }
-    
-    private void getAllReader() {
-        for (int i = 0; i < facade.getAllAccounts().size(); i++) {
-            System.out.println((i + 1) + " Фамилия: " + facade.getAllAccounts().get(i).getReader().getLastName()
-                    + " Имя: " + facade.getAllAccounts().get(i).getReader().getFirstName() + " Отчество: "
-                    + facade.getAllAccounts().get(i).getReader().getFirstName() + " Возраст: "
-                    + facade.getAllAccounts().get(i).getReader().getAge());
         }
     }
 

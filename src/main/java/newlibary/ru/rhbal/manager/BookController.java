@@ -5,15 +5,14 @@
  */
 package newlibary.ru.rhbal.manager;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import newlibary.ru.rhbal.dao.DaoAuthor;
 import newlibary.ru.rhbal.dao.DaoBook;
-import newlibary.ru.rhbal.dao.DaoGenre;
 import newlibary.ru.rhbal.entity.Author;
 import newlibary.ru.rhbal.entity.Book;
-import newlibary.ru.rhbal.entity.Genre;
 
 /**
  *
@@ -26,32 +25,28 @@ public class BookController{
         daoBook=new DaoBook();
     }
     
-    public void addBook(String name, int release, String genreName, String authorName,int authorAge){
-        daoBook.create(name, release,genreName, authorName, authorAge);
+    public void addBook(String name, int release, String genreName, int authorId) throws SQLException{
+        daoBook.create(new Book(new DaoAuthor().getById(authorId), name, release,genreName));
     }
     
-    public boolean deleteBook(int number){
-        return daoBook.delete(number);
+    public boolean deleteBook(int number) throws SQLException{
+        return daoBook.delete(daoBook.getById(number));
     }
     
-    public void editBook(int number, String newName,int release, String genreName, String authorName, int authorYear){
-        
-        //Ќаходим или создаем автора
-        DaoAuthor daoAuthor = new DaoAuthor();
-        Author author = daoAuthor.create(authorName,authorYear);
+    public void editBook(int number, String newName,int release, String genreName, int authorId) throws SQLException{
         
         //Ќаходим книгу, которую будем мен€ть
-        Book book=daoBook.getBook(number);
+        Book book=daoBook.getById(number);
         
         //¬носим изменени€
-        book.setAuthor(author);
         book.setName(newName);
         book.setRelease(release);
-        
+        book.setGenre(genreName);
+        book.setAuthor(new DaoAuthor().getById(authorId));
     }
     
     //ћетод наход€щий все книги, которые по имени соотвествуют заданному запросу
-    public ArrayList<Book> searchBookByName(String name){
+    public ArrayList<Book> searchBookByName(String name) throws SQLException{
         //»нициализируем список, в который будем записывать книги
         ArrayList<Book> books = new ArrayList<>();
         
@@ -71,7 +66,7 @@ public class BookController{
     }
     
     //ћетод наход€щий все книги, которые по имени автора книги соотвествуют заданному запросу
-    public ArrayList<Book> searchBookByAuthorName(String name){
+    public ArrayList<Book> searchBookByAuthorName(String name) throws SQLException{
         //»нициализируем список, в который будем записывать книги
         ArrayList<Book> books = new ArrayList<>();
         
@@ -89,7 +84,7 @@ public class BookController{
         return books;
     }
     
-    public ArrayList<Book> getAllBook(){
+    public ArrayList<Book> getAllBook() throws SQLException{
         return daoBook.getAll();
     }
 }

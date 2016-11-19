@@ -5,7 +5,7 @@
  */
 package newlibary.ru.rhbal.manager;
 
-import java.io.Reader;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import newlibary.ru.rhbal.dao.DaoBook;
@@ -14,8 +14,8 @@ import newlibary.ru.rhbal.dao.DaoReader;
 import newlibary.ru.rhbal.dao.exception.BookInTakenNotFoundException;
 import newlibary.ru.rhbal.dao.exception.NoBookInLibaryException;
 import newlibary.ru.rhbal.entity.Book;
+import newlibary.ru.rhbal.entity.Reader;
 import newlibary.ru.rhbal.entity.BookStatus;
-import newlibary.ru.rhbal.entity.Model;
 import newlibary.ru.rhbal.entity.Status;
 
 /**
@@ -35,17 +35,31 @@ public class BookStatusController {
     //-------------------------------------------------------------------------------------------------
     //Методы получения книг читателем
     //-------------------------------------------------------------------------------------------------
-    public void getBook(int numberReader, int numberBook, GregorianCalendar mustBeReturned) throws NoBookInLibaryException {
-        daoBookStatus.create(numberReader, numberBook, mustBeReturned);
+    public void getBook(int numberBook, int numberReader, GregorianCalendar mustBeReturned) throws NoBookInLibaryException, SQLException {
+        BookStatus bookStatus= new BookStatus(new DaoBook().getById(numberBook), new DaoReader().getById(numberReader), mustBeReturned);
+        daoBookStatus.create(bookStatus);
     }
 
     //-------------------------------------------------------------------------------------------------
-    public void putBook(int numberReader, int numberBook) throws BookInTakenNotFoundException {
-        daoBookStatus.putBook(numberReader, numberBook);
+    public void putBook(int numberBook) throws BookInTakenNotFoundException, SQLException {
+        BookStatus bookStatus=null;
+        
+        for(BookStatus value: daoBookStatus.getAll()){
+            if(value.getBook().getId().equals(numberBook)){
+                bookStatus=value;
+                break;
+            }
+        }
+        
+        if(bookStatus==null || bookStatus.getBook().getStatus()==Status.INSTOCK)
+            throw new BookInTakenNotFoundException();
+        
+        bookStatus.getBook().setStatus(Status.INSTOCK);
+        bookStatus.setTimeReturn(new GregorianCalendar());
     }
 
     //Метод возвращает все книги взятые авторизированным в программе пользователем
-    public ArrayList<Book> getBookTaken() {
+    public ArrayList<Book> getBookTaken() throws SQLException {
 
         //инициализируем список, в который будем записывать книги
         ArrayList<Book> books = new ArrayList<>();
@@ -59,12 +73,17 @@ public class BookStatusController {
         return books;
     }
 
-    public ArrayList<BookStatus> getBookStatuses(int numberReader) {
-        return Model.getINSTANCE().getReaders().get(numberReader).getBookStatuses();
+    public ArrayList<BookStatus> getBookStatuses(int numberReader) throws SQLException {
+        ArrayList<BookStatus> bookStatuses=new ArrayList<>();
+        for(BookStatus value: daoBookStatus.getAll()){
+            if(value.getReader().getId().equals(numberReader))
+                bookStatuses.add(value);
+        }
+        return bookStatuses;
     }
 
     //Метод возвращает все книги, которые находятся в библиотеке
-    public ArrayList<Book> getBookInStock() {
+    public ArrayList<Book> getBookInStock() throws SQLException {
         //инициализируем список, в который будем записывать книги
         ArrayList<Book> books = new ArrayList<>();
 
@@ -78,7 +97,7 @@ public class BookStatusController {
     }
 
     //Метод возвращает книги взятые позже некоторой даты
-    public ArrayList<BookStatus> booksTakenOverTime(GregorianCalendar calendar) {
+    public ArrayList<BookStatus> booksTakenOverTime(GregorianCalendar calendar) throws SQLException {
         //инициализируем список, в который будем записывать книги
         ArrayList<BookStatus> bookStatuses = new ArrayList<>();
         
@@ -95,12 +114,13 @@ public class BookStatusController {
     }
 
     //Метод возвращает книги взятые когда-либо конкретным пользователем
-    public ArrayList<BookStatus> booksIndividualReader(Account account) {
+    public ArrayList<BookStatus> booksIndividualReader(Reader reader) throws SQLException {
         
         ArrayList<BookStatus> bookStatuses = new ArrayList<>();
         
-        for (BookStatus bookStatus : account.getBookStatuses()) {
-            bookStatuses.add(bookStatus);
+        for (BookStatus bookStatus : daoBookStatus.getAll()) {
+            if(bookStatus.getReader().getId().equals(reader.getId()))
+                    bookStatuses.add(bookStatus);
         }
         return bookStatuses;
     }

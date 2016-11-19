@@ -18,35 +18,44 @@ import newlibary.ru.rhbal.entity.Author;
  *
  * @author User
  */
-public class AuthorDao extends AbstractDao<Author>{
+public class DaoAuthor extends AbstractDao<Author>{
     
-    private static final String TABLE_NAME="author";
-    private static final String COLUMN_ID="id";
-    private static final String COLUMN_NAME="name";
-    private static final String COLUMN_AGE="age";
    
     @Override
     public String getCreateSqlQuery(Author entity) {
-        return "INSERT INTO "+TABLE_NAME+" ("+COLUMN_NAME+", "+COLUMN_AGE+") VALUES('"+entity.getName()+"',"+entity.getAge()+")";
+        return "INSERT INTO "+getTableName()+" ("+getColumnName()+", "+getColumnAge()+") VALUES('"+entity.getName()+"',"+entity.getAge()+")";
     }
 
     @Override
-    public String getTableName() {
-        return TABLE_NAME;
+    protected String getTableName() {
+        return "author";
     }
 
     @Override
     public String getUpdateSqlQuery(Author entity) {
-        return "UPDATE "+TABLE_NAME+" SET "+COLUMN_NAME+"= '"+entity.getName()+"', "+COLUMN_AGE+"="+entity.getAge()+" WHERE id="+entity.getId();
+        return "UPDATE "+getTableName()+" SET "+getColumnName()+"= '"+entity.getName()+"', "+getColumnAge()+"="+entity.getAge()+" WHERE id="+entity.getId();
     }
 
     @Override
     protected Author toCollectEntity(ResultSet rs) throws SQLException {
             Author author = new Author();
-            author.setId(rs.getInt(COLUMN_ID));
-            author.setName(rs.getString(COLUMN_NAME));
-            author.setAge(rs.getInt(COLUMN_AGE));
+            author.setId(rs.getInt(getColumnId()));
+            author.setName(rs.getString(getColumnName()));
+            author.setAge(rs.getInt(getColumnAge()));
             return author;
+    }
+
+    @Override
+    protected String getColumnId() {
+        return "id";
+    }
+    
+    protected String getColumnName() {
+        return "name";
+    }
+    
+    protected String getColumnAge() {
+        return "age";
     }
     
 }

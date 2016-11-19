@@ -17,8 +17,20 @@ public class Reader extends Entity<Integer>{
     private String surname;
     private int age;
     private ArrayList<BookStatus> bookStatuses;
+    private String login;
+    private String password;
 
     public Reader(String LastName, String FirstName, String Surname, int age) {
+        this.lastName = LastName;
+        this.firstName = FirstName;
+        this.surname = Surname;
+        this.age = age;
+        bookStatuses=new ArrayList<>();
+    }
+    
+    public Reader(String login, String password, String LastName, String FirstName, String Surname, int age) {
+        this.login=login;
+        this.password=password;
         this.lastName = LastName;
         this.firstName = FirstName;
         this.surname = Surname;
@@ -77,6 +89,23 @@ public class Reader extends Entity<Integer>{
     public void setId(int id) {
         this.id = id;
     }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+    
     
     
     

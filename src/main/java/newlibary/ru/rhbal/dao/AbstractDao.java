@@ -68,7 +68,8 @@ public abstract class AbstractDao <E extends Entity> {
         return entities;
     };
     
-    public abstract String getTableName();
+    protected abstract String getTableName();
+    protected abstract String getColumnId();
     public abstract String getCreateSqlQuery(E entity);
     public abstract String getUpdateSqlQuery(E entity);
     protected abstract E toCollectEntity(ResultSet rs) throws SQLException;
