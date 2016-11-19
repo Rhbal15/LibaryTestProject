@@ -18,19 +18,19 @@ import newlibary.ru.rhbal.libaryproject.NewLibary;
  */
 public class Connector {
     private Connection dbConnection;
-    private static final String DRIVER_CLASS="com.mysql.jdbc.Driver";
-    private static final String DATA_BASE_URL ="jdbc:mysql://localhost:3306/libary";
-    private static final String DATA_BASE_USER_NAME="root";
-    private static final String DATA_BASE_PASSWORD="root";
     
     public Connection getConnection(){
+        
+        //Загружаем драйвер
         try {
-            Class.forName(DRIVER_CLASS);
+            Class.forName(getDriverClassString());
         } catch (ClassNotFoundException ex) {
             System.err.println("Не удалось найти дирайвер");
         }
+        
+        //Получаем соединение с БД
         try {
-            dbConnection=DriverManager.getConnection(DATA_BASE_URL,DATA_BASE_USER_NAME,DATA_BASE_PASSWORD);
+            dbConnection=DriverManager.getConnection(getDataBaseURL(),getDataBaseUserName(),getDataBasePassword());
         } catch (SQLException ex) {
             System.err.println("Не удалось подключится к базе данных");
         }
@@ -38,12 +38,29 @@ public class Connector {
     }
     
     public void close(){
+        //Закрываем соединение с БД
         try {
             dbConnection.close();
         } catch (SQLException ex) {
             System.err.println("Не удалось закрыть соединение");
             Logger.getLogger(Connector.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    protected String getDriverClassString(){
+        return "com.mysql.jdbc.Driver";
+    }
+    
+    protected String getDataBaseURL(){
+        return "jdbc:mysql://localhost:3306/libary";
+    }
+    
+    protected String getDataBaseUserName(){
+        return "root";
+    }
+    
+    protected String getDataBasePassword(){
+        return "root";
     }
     
     
