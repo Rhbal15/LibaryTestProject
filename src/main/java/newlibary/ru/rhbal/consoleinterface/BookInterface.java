@@ -7,10 +7,13 @@ package newlibary.ru.rhbal.consoleinterface;
 
 import java.sql.SQLException;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import newlibary.ru.rhbal.facade.Facade;
+import newlibary.ru.rhbal.manager.exception.EntityNotFoundException;
 
 /**
- *
  * @author User
  */
 public class BookInterface {
@@ -21,13 +24,13 @@ public class BookInterface {
     public BookInterface() {
         facade = new Facade();
         scanner = new Scanner(System.in);
-        getterAll=new GetterAll(facade);
+        getterAll = new GetterAll(facade);
     }
 
     public void working() throws SQLException {
-        boolean end=false;
+        boolean end = false;
         while (!end) {
-            System.out.println("Вы можете:\n1.Добавить книгу\n2.Удалить книгу\n3.Изменить книгу\n4.Вывести все книги находящиеся в библиотеке\n0.Вернуться на предыдущий экран");
+            System.out.println("Р’С‹ РјРѕР¶РµС‚Рµ:\n1.Р”РѕР±Р°РІРёС‚СЊ РєРЅРёРіСѓ\n2.РЈРґР°Р»РёС‚СЊ РєРЅРёРіСѓ\n3.РР·РјРµРЅРёС‚СЊ РєРЅРёРіСѓ\n4.Р’С‹РІРµСЃС‚Рё РІСЃРµ РєРЅРёРіРё РЅР°С…РѕРґСЏС‰РёРµСЃСЏ РІ Р±РёР±Р»РёРѕС‚РµРєРµ\n0.Р’РµСЂРЅСѓС‚СЊСЃСЏ РЅР° РїСЂРµРґС‹РґСѓС‰РёР№ СЌРєСЂР°РЅ");
             String line = scanner.nextLine();
             switch (line) {
                 case "1":
@@ -40,52 +43,69 @@ public class BookInterface {
                     edit();
                     break;
                 case "4":
-                    getterAll.getAllBook();
+                    getterAll.getAllBookInStock();
                     break;
                 case "0":
-                    end=true;
+                    end = true;
                     break;
                 default:
-                    System.out.println("Неверно введено действие");
+                    System.out.println("РќРµРІРµСЂРЅРѕ РІРІРµРґРµРЅРѕ РґРµР№СЃС‚РІРёРµ");
             }
         }
     }
 
     private void create() throws SQLException {
-        System.out.println("Введите название Книги: ");
-        String name = scanner.nextLine();
-        System.out.println("Введите год выпуска книги: ");
-        int release = scanner.nextInt();
-        System.out.println("Введите Жанр книги: ");
-        String genre = scanner.nextLine();
-        getterAll.getAllAuthor();
-        System.out.println("Выберите Автора: ");
-        int authorId = scanner.nextInt();
-        facade.addBook(name, release, genre, authorId);
+        try {
+            System.out.println("Р’РІРµРґРёС‚Рµ РЅР°Р·РІР°РЅРёРµ РљРЅРёРіРё: ");
+            String name = scanner.nextLine();
+            System.out.println("Р’РІРµРґРёС‚Рµ РіРѕРґ РІС‹РїСѓСЃРєР° РєРЅРёРіРё: ");
+            int release = new Integer(scanner.nextLine());
+            System.out.println("Р’РІРµРґРёС‚Рµ Р–Р°РЅСЂ РєРЅРёРіРё: ");
+            String genre = scanner.nextLine();
+            getterAll.getAllAuthor();
+            System.out.println("Р’С‹Р±РµСЂРёС‚Рµ РђРІС‚РѕСЂР°: ");
+            int authorId = new Integer(scanner.nextLine());
+            facade.addBook(name, release, genre, authorId);
+        } catch (NumberFormatException ex) {
+            System.out.println("РќРµРІРµСЂРЅРѕ РІРІРµРґРµРЅ СЃРёРјРІРѕР»");
+        }
     }
 
     private void delete() throws SQLException {
-        System.out.println("Введите книгу, которую хотите удалить: ");
-        getterAll.getAllBook();
-        int number= scanner.nextInt()-1;
-        facade.deleteBook(number);
+        try {
+            System.out.println("Р’РІРµРґРёС‚Рµ РєРЅРёРіСѓ, РєРѕС‚РѕСЂСѓСЋ С…РѕС‚РёС‚Рµ СѓРґР°Р»РёС‚СЊ: ");
+            getterAll.getAllBook();
+            int number = new Integer(scanner.nextLine());
+
+            facade.deleteBook(number);
+        } catch (EntityNotFoundException ex) {
+            System.out.println(ex.getMessage());
+        } catch (NumberFormatException ex) {
+            System.out.println("РќРµРІРµСЂРЅРѕ РІРІРµРґРµРЅ СЃРёРјРІРѕР»");
+        }
     }
 
     private void edit() throws SQLException {
-        System.out.println("Введите книгу, которую  хотите изменить: ");
-        getterAll.getAllBook();
-        int number= scanner.nextInt()-1;
-        System.out.println("Введите новое название Книги: ");
-        String name = scanner.nextLine();
-        System.out.println("Введите год выпуска книги: ");
-        int release = scanner.nextInt();
-        System.out.println("Введите Жанр книги: ");
-        String genre = scanner.nextLine();
-        getterAll.getAllAuthor();
-        System.out.println("Введите имя Автора ");
-        int authorId = scanner.nextInt();
-        facade.editBook(number, name, release, genre, authorId);
+        try {
+            System.out.println("Р’РІРµРґРёС‚Рµ РєРЅРёРіСѓ, РєРѕС‚РѕСЂСѓСЋ  С…РѕС‚РёС‚Рµ РёР·РјРµРЅРёС‚СЊ: ");
+            getterAll.getAllBook();
+            int number = new Integer(scanner.nextLine());
+            System.out.println("Р’РІРµРґРёС‚Рµ РЅРѕРІРѕРµ РЅР°Р·РІР°РЅРёРµ РљРЅРёРіРё: ");
+            String name = scanner.nextLine();
+            System.out.println("Р’РІРµРґРёС‚Рµ РіРѕРґ РІС‹РїСѓСЃРєР° РєРЅРёРіРё: ");
+            int release = new Integer(scanner.nextLine());
+            System.out.println("Р’РІРµРґРёС‚Рµ Р–Р°РЅСЂ РєРЅРёРіРё: ");
+            String genre = scanner.nextLine();
+            getterAll.getAllAuthor();
+            System.out.println("Р’РІРµРґРёС‚Рµ РёРјСЏ РђРІС‚РѕСЂР° ");
+            int authorId = new Integer(scanner.nextLine());
+            facade.editBook(number, name, release, genre, authorId);
+        } catch (EntityNotFoundException ex) {
+            System.out.println(ex.getMessage());
+        } catch (NumberFormatException ex) {
+            System.out.println("РќРµРІРµСЂРЅРѕ РІРІРµРґРµРЅ СЃРёРјРІРѕР»");
+        }
     }
 
-    
+
 }

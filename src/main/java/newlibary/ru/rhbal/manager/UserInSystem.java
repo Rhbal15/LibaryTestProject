@@ -11,7 +11,7 @@ import newlibary.ru.rhbal.entity.Reader;
  * @author User
  */
 
-//класс со статическими полями и методами, хранит пользователя авторизированного в программе
+//РєР»Р°СЃСЃ СЃРѕ СЃС‚Р°С‚РёС‡РµСЃРєРёРјРё РїРѕР»СЏРјРё Рё РјРµС‚РѕРґР°РјРё, С…СЂР°РЅРёС‚ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ Р°РІС‚РѕСЂРёР·РёСЂРѕРІР°РЅРЅРѕРіРѕ РІ РїСЂРѕРіСЂР°РјРјРµ
 public class UserInSystem {
     private static Reader reader = null;
 
@@ -22,5 +22,5 @@ public class UserInSystem {
     public static void setReader(Reader reader) {
         UserInSystem.reader = reader;
     }
-    
+
 }

@@ -7,16 +7,17 @@ package newlibary.ru.rhbal.manager;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 import newlibary.ru.rhbal.dao.DaoBook;
 import newlibary.ru.rhbal.dao.DaoBookStatus;
 import newlibary.ru.rhbal.dao.DaoReader;
-import newlibary.ru.rhbal.dao.exception.BookInTakenNotFoundException;
-import newlibary.ru.rhbal.dao.exception.NoBookInLibaryException;
+import newlibary.ru.rhbal.manager.exception.BookInTakenNotFoundException;
 import newlibary.ru.rhbal.entity.Book;
 import newlibary.ru.rhbal.entity.Reader;
 import newlibary.ru.rhbal.entity.BookStatus;
 import newlibary.ru.rhbal.entity.Status;
+import newlibary.ru.rhbal.manager.exception.EntityNotFoundException;
 
 /**
  *
@@ -26,45 +27,64 @@ public class BookStatusController {
 
     DaoBookStatus daoBookStatus;
     DaoBook daoBook;
+    ArrayList<BookStatus> bookStatuses;
+    boolean isChanged = true;
 
     public BookStatusController() {
         daoBookStatus = new DaoBookStatus();
         daoBook = new DaoBook();
+        bookStatuses=new ArrayList<>();
+
     }
 
     //-------------------------------------------------------------------------------------------------
-    //Методы получения книг читателем
+    //РњРµС‚РѕРґС‹ РїРѕР»СѓС‡РµРЅРёСЏ РєРЅРёРі С‡РёС‚Р°С‚РµР»РµРј
     //-------------------------------------------------------------------------------------------------
-    public void getBook(int numberBook, int numberReader, GregorianCalendar mustBeReturned) throws NoBookInLibaryException, SQLException {
-        BookStatus bookStatus= new BookStatus(new DaoBook().getById(numberBook), new DaoReader().getById(numberReader), mustBeReturned);
-        daoBookStatus.create(bookStatus);
-    }
+    public void getBook(int numberBook, int numberReader, GregorianCalendar mustBeReturned) throws SQLException, EntityNotFoundException {
 
-    //-------------------------------------------------------------------------------------------------
-    public void putBook(int numberBook) throws BookInTakenNotFoundException, SQLException {
-        BookStatus bookStatus=null;
-        
-        for(BookStatus value: daoBookStatus.getAll()){
-            if(value.getBook().getId().equals(numberBook)){
-                bookStatus=value;
-                break;
-            }
+        Book book=new DaoBook().getById(numberBook);
+
+        if(book==null || book.getStatus()==Status.TAKEN){
+            throw new EntityNotFoundException("Р”РѕР±Р°РІРёС‚СЊ СѓС‡РµС‚РЅСѓСЋ Р·Р°РїРёСЃСЊ РЅРµ СѓРґР°Р»РѕСЃСЊ, РєРЅРёРіР° РЅРµ РЅР°Р№РґРµРЅР°");
         }
-        
-        if(bookStatus==null || bookStatus.getBook().getStatus()==Status.INSTOCK)
-            throw new BookInTakenNotFoundException();
-        
+
+        Reader reader = new DaoReader().getById(numberReader);
+        if(reader==null){
+            throw new EntityNotFoundException("Р”РѕР±Р°РІРёС‚СЊ СѓС‡РµС‚РЅСѓСЋ Р·Р°РїРёСЃСЊ РЅРµ СѓРґР°Р»РѕСЃСЊ, С‡РёС‚Р°С‚РµР»СЊ РЅРµ РЅР°Р№РґРµРЅ");
+        }
+
+        BookStatus bookStatus = new BookStatus(book,reader , mustBeReturned);
+        book.setStatus(Status.TAKEN);
+        daoBook.update(book);
+        daoBookStatus.create(bookStatus);
+
+        isChanged = true;
+    }
+
+    //-------------------------------------------------------------------------------------------------
+    public void putBook(int numberBookStatus) throws BookInTakenNotFoundException, SQLException {
+        BookStatus bookStatus = daoBookStatus.getById(numberBookStatus);
+
+        if (bookStatus == null || bookStatus.getBook().getStatus() == Status.INSTOCK) {
+            throw new BookInTakenNotFoundException("РљРЅРёРіР° РІ Р±РёР±Р»РёРѕС‚РµРєРµ РЅРµ РЅР°Р№РґРµРЅР°");
+        }
+
         bookStatus.getBook().setStatus(Status.INSTOCK);
         bookStatus.setTimeReturn(new GregorianCalendar());
+
+        daoBookStatus.update(bookStatus);
+        daoBook.update(bookStatus.getBook());
+
+        isChanged = true;
     }
 
-    //Метод возвращает все книги взятые авторизированным в программе пользователем
+    //РњРµС‚РѕРґ РІРѕР·РІСЂР°С‰Р°РµС‚ РІСЃРµ РєРЅРёРіРё РІР·СЏС‚С‹Рµ Р°РІС‚РѕСЂРёР·РёСЂРѕРІР°РЅРЅС‹Рј РІ РїСЂРѕРіСЂР°РјРјРµ РїРѕР»СЊР·РѕРІР°С‚РµР»РµРј
     public ArrayList<Book> getBookTaken() throws SQLException {
 
-        //инициализируем список, в который будем записывать книги
+        //РёРЅРёС†РёР°Р»РёР·РёСЂСѓРµРј СЃРїРёСЃРѕРє, РІ РєРѕС‚РѕСЂС‹Р№ Р±СѓРґРµРј Р·Р°РїРёСЃС‹РІР°С‚СЊ РєРЅРёРіРё
         ArrayList<Book> books = new ArrayList<>();
 
-        //Перебираем все учетные записи пользователя, записываем, те что на руках 
+        //РџРµСЂРµР±РёСЂР°РµРј РІСЃРµ СѓС‡РµС‚РЅС‹Рµ Р·Р°РїРёСЃРё РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ, Р·Р°РїРёСЃС‹РІР°РµРј, С‚Рµ С‡С‚Рѕ РЅР° СЂСѓРєР°С…
         for (BookStatus value : daoBookStatus.getAll()) {
             if (value.getBook().getStatus() == Status.TAKEN) {
                 books.add(value.getBook());
@@ -73,21 +93,31 @@ public class BookStatusController {
         return books;
     }
 
+    //РњРµС‚РѕРґ РІРѕР·РІСЂР°С‰Р°СЋС‰РёР№ РІСЃРµ СѓС‡РµС‚РЅС‹Рµ Р·Р°РїРёСЃРё РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
     public ArrayList<BookStatus> getBookStatuses(int numberReader) throws SQLException {
-        ArrayList<BookStatus> bookStatuses=new ArrayList<>();
-        for(BookStatus value: daoBookStatus.getAll()){
-            if(value.getReader().getId().equals(numberReader))
-                bookStatuses.add(value);
+
+        if (isChanged) {
+
+            bookStatuses=new ArrayList<>();
+            for (BookStatus value : daoBookStatus.getAll()) {
+                if (value.getReader().getId().equals(numberReader)) {
+                    bookStatuses.add(value);
+                }
+            }
+            isChanged=false;
+            return bookStatuses;
         }
-        return bookStatuses;
+        else{
+            return bookStatuses;
+        }
     }
 
-    //Метод возвращает все книги, которые находятся в библиотеке
+    //РњРµС‚РѕРґ РІРѕР·РІСЂР°С‰Р°РµС‚ РІСЃРµ РєРЅРёРіРё, РєРѕС‚РѕСЂС‹Рµ РЅР°С…РѕРґСЏС‚СЃСЏ РІ Р±РёР±Р»РёРѕС‚РµРєРµ
     public ArrayList<Book> getBookInStock() throws SQLException {
-        //инициализируем список, в который будем записывать книги
+        //РёРЅРёС†РёР°Р»РёР·РёСЂСѓРµРј СЃРїРёСЃРѕРє, РІ РєРѕС‚РѕСЂС‹Р№ Р±СѓРґРµРј Р·Р°РїРёСЃС‹РІР°С‚СЊ РєРЅРёРіРё
         ArrayList<Book> books = new ArrayList<>();
 
-        //Перебираем все книги, записываем, те что в библиотеке
+        //РџРµСЂРµР±РёСЂР°РµРј РІСЃРµ РєРЅРёРіРё, Р·Р°РїРёСЃС‹РІР°РµРј, С‚Рµ С‡С‚Рѕ РІ Р±РёР±Р»РёРѕС‚РµРєРµ
         for (Book value : daoBook.getAll()) {
             if (value.getStatus() == Status.INSTOCK) {
                 books.add(value);
@@ -96,13 +126,13 @@ public class BookStatusController {
         return books;
     }
 
-    //Метод возвращает книги взятые позже некоторой даты
+    //РњРµС‚РѕРґ РІРѕР·РІСЂР°С‰Р°РµС‚ РєРЅРёРіРё РІР·СЏС‚С‹Рµ РїРѕР·Р¶Рµ РЅРµРєРѕС‚РѕСЂРѕР№ РґР°С‚С‹
     public ArrayList<BookStatus> booksTakenOverTime(GregorianCalendar calendar) throws SQLException {
-        //инициализируем список, в который будем записывать книги
+        //РёРЅРёС†РёР°Р»РёР·РёСЂСѓРµРј СЃРїРёСЃРѕРє, РІ РєРѕС‚РѕСЂС‹Р№ Р±СѓРґРµРј Р·Р°РїРёСЃС‹РІР°С‚СЊ РєРЅРёРіРё
         ArrayList<BookStatus> bookStatuses = new ArrayList<>();
-        
-        DaoReader daoReader=new DaoReader();
-        //Перебираем все аккаунты, а в них все учетные записи, записываем, те что позже заданной даты
+
+        DaoReader daoReader = new DaoReader();
+        //РџРµСЂРµР±РёСЂР°РµРј РІСЃРµ Р°РєРєР°СѓРЅС‚С‹, Р° РІ РЅРёС… РІСЃРµ СѓС‡РµС‚РЅС‹Рµ Р·Р°РїРёСЃРё, Р·Р°РїРёСЃС‹РІР°РµРј, С‚Рµ С‡С‚Рѕ РїРѕР·Р¶Рµ Р·Р°РґР°РЅРЅРѕР№ РґР°С‚С‹
         for (Reader value : daoReader.getAll()) {
             for (BookStatus bookStatus : value.getBookStatuses()) {
                 if (bookStatus.getTimeReceipt().compareTo(calendar) >= 0) {
@@ -113,14 +143,15 @@ public class BookStatusController {
         return bookStatuses;
     }
 
-    //Метод возвращает книги взятые когда-либо конкретным пользователем
-    public ArrayList<BookStatus> booksIndividualReader(Reader reader) throws SQLException {
-        
+    //РњРµС‚РѕРґ РІРѕР·РІСЂР°С‰Р°РµС‚ РєРЅРёРіРё РІР·СЏС‚С‹Рµ РєРѕРіРґР°-Р»РёР±Рѕ РєРѕРЅРєСЂРµС‚РЅС‹Рј РїРѕР»СЊР·РѕРІР°С‚РµР»РµРј
+    public ArrayList<BookStatus> booksIndividualReader(int readerNumber) throws SQLException {
+
         ArrayList<BookStatus> bookStatuses = new ArrayList<>();
-        
+
         for (BookStatus bookStatus : daoBookStatus.getAll()) {
-            if(bookStatus.getReader().getId().equals(reader.getId()))
-                    bookStatuses.add(bookStatus);
+            if (bookStatus.getReader().getId().equals(readerNumber)) {
+                bookStatuses.add(bookStatus);
+            }
         }
         return bookStatuses;
     }

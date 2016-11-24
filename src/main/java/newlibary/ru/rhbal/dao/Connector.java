@@ -10,7 +10,6 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import newlibary.ru.rhbal.libaryproject.NewLibary;
 
 /**
  *
@@ -18,50 +17,50 @@ import newlibary.ru.rhbal.libaryproject.NewLibary;
  */
 public class Connector {
     private Connection dbConnection;
-    
+
     public Connection getConnection(){
-        
-        //Загружаем драйвер
+
+        //Р—Р°РіСЂСѓР¶Р°РµРј РґСЂР°Р№РІРµСЂ
         try {
             Class.forName(getDriverClassString());
         } catch (ClassNotFoundException ex) {
-            System.err.println("Не удалось найти дирайвер");
+            System.err.println("РќРµ СѓРґР°Р»РѕСЃСЊ РЅР°Р№С‚Рё РґРёСЂР°Р№РІРµСЂ");
         }
-        
-        //Получаем соединение с БД
+
+        //РџРѕР»СѓС‡Р°РµРј СЃРѕРµРґРёРЅРµРЅРёРµ СЃ Р‘Р”
         try {
             dbConnection=DriverManager.getConnection(getDataBaseURL(),getDataBaseUserName(),getDataBasePassword());
         } catch (SQLException ex) {
-            System.err.println("Не удалось подключится к базе данных");
+            System.err.println("РќРµ СѓРґР°Р»РѕСЃСЊ РїРѕРґРєР»СЋС‡РёС‚СЃСЏ Рє Р±Р°Р·Рµ РґР°РЅРЅС‹С…");
         }
         return dbConnection;
     }
-    
+
     public void close(){
-        //Закрываем соединение с БД
+        //Р—Р°РєСЂС‹РІР°РµРј СЃРѕРµРґРёРЅРµРЅРёРµ СЃ Р‘Р”
         try {
             dbConnection.close();
         } catch (SQLException ex) {
-            System.err.println("Не удалось закрыть соединение");
+            System.err.println("РќРµ СѓРґР°Р»РѕСЃСЊ Р·Р°РєСЂС‹С‚СЊ СЃРѕРµРґРёРЅРµРЅРёРµ");
             Logger.getLogger(Connector.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     protected String getDriverClassString(){
         return "com.mysql.jdbc.Driver";
     }
-    
+
     protected String getDataBaseURL(){
         return "jdbc:mysql://localhost:3306/libary";
     }
-    
+
     protected String getDataBaseUserName(){
         return "root";
     }
-    
+
     protected String getDataBasePassword(){
         return "root";
     }
-    
-    
+
+
 }

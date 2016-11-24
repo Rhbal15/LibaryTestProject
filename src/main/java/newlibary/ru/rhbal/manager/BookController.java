@@ -13,6 +13,7 @@ import newlibary.ru.rhbal.dao.DaoAuthor;
 import newlibary.ru.rhbal.dao.DaoBook;
 import newlibary.ru.rhbal.entity.Author;
 import newlibary.ru.rhbal.entity.Book;
+import newlibary.ru.rhbal.manager.exception.EntityNotFoundException;
 
 /**
  *
@@ -24,58 +25,66 @@ public class BookController{
     public BookController() {
         daoBook=new DaoBook();
     }
-    
+
     public void addBook(String name, int release, String genreName, int authorId) throws SQLException{
         daoBook.create(new Book(new DaoAuthor().getById(authorId), name, release,genreName));
     }
-    
-    public boolean deleteBook(int number) throws SQLException{
-        return daoBook.delete(daoBook.getById(number));
+
+    public boolean deleteBook(int number) throws SQLException, EntityNotFoundException{
+        Book book = daoBook.getById(number);
+        if(book==null){
+            throw new EntityNotFoundException("РљРЅРёРіР° РЅРµ РЅР°Р№РґРµРЅР°, СѓРґР°Р»РµРЅРёРµ РЅРµ РїСЂРѕРёР·РѕС€Р»Рѕ");
+        }
+
+        return daoBook.delete(book);
     }
-    
-    public void editBook(int number, String newName,int release, String genreName, int authorId) throws SQLException{
-        
-        //Находим книгу, которую будем менять
+
+    public void editBook(int number, String newName,int release, String genreName, int authorId) throws SQLException, EntityNotFoundException{
+
+        //РќР°С…РѕРґРёРј РєРЅРёРіСѓ, РєРѕС‚РѕСЂСѓСЋ Р±СѓРґРµРј РјРµРЅСЏС‚СЊ
         Book book=daoBook.getById(number);
-        
-        //Вносим изменения
+        if(book==null){
+            throw new EntityNotFoundException("РљРЅРёРіР° РЅРµ РЅР°Р№РґРµРЅ, РёР·РјРµРЅРµРЅРёР№ РЅРµ РїСЂРѕРёР·РѕС€Р»Рѕ");
+        }
+
+        //Р’РЅРѕСЃРёРј РёР·РјРµРЅРµРЅРёСЏ
         book.setName(newName);
         book.setRelease(release);
         book.setGenre(genreName);
         book.setAuthor(new DaoAuthor().getById(authorId));
     }
-    
-    //Метод находящий все книги, которые по имени соотвествуют заданному запросу
+
+    //РњРµС‚РѕРґ РЅР°С…РѕРґСЏС‰РёР№ РІСЃРµ РєРЅРёРіРё, РєРѕС‚РѕСЂС‹Рµ РїРѕ РёРјРµРЅРё СЃРѕРѕС‚РІРµСЃС‚РІСѓСЋС‚ Р·Р°РґР°РЅРЅРѕРјСѓ Р·Р°РїСЂРѕСЃСѓ
     public ArrayList<Book> searchBookByName(String name) throws SQLException{
-        //Инициализируем список, в который будем записывать книги
+        //РРЅРёС†РёР°Р»РёР·РёСЂСѓРµРј СЃРїРёСЃРѕРє, РІ РєРѕС‚РѕСЂС‹Р№ Р±СѓРґРµРј Р·Р°РїРёСЃС‹РІР°С‚СЊ РєРЅРёРіРё
         ArrayList<Book> books = new ArrayList<>();
-        
-        //Пример шаблона: 
-        //name=Игра string= Игра престолов matches:true 
-        Pattern pattern = Pattern.compile("[a-z A-Zа-яА-я]*"+name+"[a-z A-Zа-яА-я]*");
+
+        //РџСЂРёРјРµСЂ С€Р°Р±Р»РѕРЅР°:
+        //name=РРіСЂР° string= РРіСЂР° РїСЂРµСЃС‚РѕР»РѕРІ matches:true
+        Pattern pattern = Pattern.compile("[a-z A-ZР°-СЏРђ-СЏ]*"+name+"[a-z A-ZР°-СЏРђ-СЏ]*");
         Matcher matcher;
-        
-        //Перебираем все книги, выбираем те, которые соответствую шаблону
+
+        //РџРµСЂРµР±РёСЂР°РµРј РІСЃРµ РєРЅРёРіРё, РІС‹Р±РёСЂР°РµРј С‚Рµ, РєРѕС‚РѕСЂС‹Рµ СЃРѕРѕС‚РІРµС‚СЃС‚РІСѓСЋ С€Р°Р±Р»РѕРЅСѓ
         for(Book value: daoBook.getAll()){
             matcher=pattern.matcher(value.getName());
             if(matcher.matches())
                 books.add(value);
         }
-        
+
         return books;
     }
-    
-    //Метод находящий все книги, которые по имени автора книги соотвествуют заданному запросу
+
+    //РњРµС‚РѕРґ РЅР°С…РѕРґСЏС‰РёР№ РІСЃРµ РєРЅРёРіРё, РєРѕС‚РѕСЂС‹Рµ РїРѕ РёРјРµРЅРё Р°РІС‚РѕСЂР° РєРЅРёРіРё СЃРѕРѕС‚РІРµСЃС‚РІСѓСЋС‚ Р·Р°РґР°РЅРЅРѕРјСѓ Р·Р°РїСЂРѕСЃСѓ
     public ArrayList<Book> searchBookByAuthorName(String name) throws SQLException{
-        //Инициализируем список, в который будем записывать книги
+        //РРЅРёС†РёР°Р»РёР·РёСЂСѓРµРј СЃРїРёСЃРѕРє, РІ РєРѕС‚РѕСЂС‹Р№ Р±СѓРґРµРј Р·Р°РїРёСЃС‹РІР°С‚СЊ РєРЅРёРіРё
         ArrayList<Book> books = new ArrayList<>();
-        
-        //Пример шаблона: 
-        //name=Игра string= Игра престолов matches:true 
-        Pattern pattern = Pattern.compile("[a-z A-Zа-яА-я]*"+name+"[a-z A-Zа-яА-я]*");
+
+        //РџСЂРёРјРµСЂ С€Р°Р±Р»РѕРЅР°:
+        //name=РРіСЂР° string= РРіСЂР° РїСЂРµСЃС‚РѕР»РѕРІ matches:true
+        Pattern pattern = Pattern.compile("[a-z A-ZР°-СЏРђ-СЏ]*"+name+"[a-z A-ZР°-СЏРђ-СЏ]*");
         Matcher matcher;
-        
-        //Перебираем все книги, выбираем те, которые соответствую шаблону
+
+        //РџРµСЂРµР±РёСЂР°РµРј РІСЃРµ РєРЅРёРіРё, РІС‹Р±РёСЂР°РµРј С‚Рµ, РєРѕС‚РѕСЂС‹Рµ СЃРѕРѕС‚РІРµС‚СЃС‚РІСѓСЋ С€Р°Р±Р»РѕРЅСѓ
         for(Book value: daoBook.getAll()){
             matcher=pattern.matcher(value.getAuthor().getName());
             if(matcher.matches())
@@ -83,7 +92,7 @@ public class BookController{
         }
         return books;
     }
-    
+
     public ArrayList<Book> getAllBook() throws SQLException{
         return daoBook.getAll();
     }

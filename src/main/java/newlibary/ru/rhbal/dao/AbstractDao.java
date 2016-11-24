@@ -16,72 +16,72 @@ import newlibary.ru.rhbal.entity.Entity;
  * @author User
  */
 public abstract class AbstractDao <E extends Entity> {
-    
-    //Создание сущности
+
+    //РЎРѕР·РґР°РЅРёРµ СЃСѓС‰РЅРѕСЃС‚Рё
     public void create(E entity)throws SQLException{
-        
-        //Создаем соединение с БД
+
+        //РЎРѕР·РґР°РµРј СЃРѕРµРґРёРЅРµРЅРёРµ СЃ Р‘Р”
         Connector connector=new Connector();
         Connection connection=connector.getConnection();
-        
-        //Отправляем SQL-запрос к БД
+
+        //РћС‚РїСЂР°РІР»СЏРµРј SQL-Р·Р°РїСЂРѕСЃ Рє Р‘Р”
         connection.createStatement().executeUpdate(getCreateSqlQuery(entity));
         connector.close();
-    };    
-    
+    };
+
     public E getById(int id) throws SQLException{
-        //Создаем соединение с БД
+        //РЎРѕР·РґР°РµРј СЃРѕРµРґРёРЅРµРЅРёРµ СЃ Р‘Р”
         Connector connector=new Connector();
         Connection connection=connector.getConnection();
-        
-        //Отправляем SQL-запрос к БД
+
+        //РћС‚РїСЂР°РІР»СЏРµРј SQL-Р·Р°РїСЂРѕСЃ Рє Р‘Р”
         String sqlQuery="SELECT * FROM "+getTableName()+" WHERE id="+id;
         ResultSet rs= connection.createStatement().executeQuery(sqlQuery);
-        
-        //Проверяем, есть ли хотя бы один возвращенный запросом элемент, если нет возвращаем null
+
+        //РџСЂРѕРІРµСЂСЏРµРј, РµСЃС‚СЊ Р»Рё С…РѕС‚СЏ Р±С‹ РѕРґРёРЅ РІРѕР·РІСЂР°С‰РµРЅРЅС‹Р№ Р·Р°РїСЂРѕСЃРѕРј СЌР»РµРјРµРЅС‚, РµСЃР»Рё РЅРµС‚ РІРѕР·РІСЂР°С‰Р°РµРј null
         if(!rs.last())
             return null;
         rs.first();
-        
-        //Если есть возвращаем его
+
+        //Р•СЃР»Рё РµСЃС‚СЊ РІРѕР·РІСЂР°С‰Р°РµРј РµРіРѕ
         E entity =toCollectEntity(rs);
         connector.close();
         return entity;
     };
-    
+
     public boolean update(E entity)throws SQLException{
-        //Создаем соединение с БД
+        //РЎРѕР·РґР°РµРј СЃРѕРµРґРёРЅРµРЅРёРµ СЃ Р‘Р”
         Connector connector=new Connector();
         Connection connection=connector.getConnection();
-        
-        //Отправляем SQL-запрос к БД
+
+        //РћС‚РїСЂР°РІР»СЏРµРј SQL-Р·Р°РїСЂРѕСЃ Рє Р‘Р”
         connection.createStatement().execute(getUpdateSqlQuery(entity));
         connection.close();
         return true;
     };
-    
+
     public boolean delete(E entity)throws SQLException{
-        //Создаем соединение с БД
+        //РЎРѕР·РґР°РµРј СЃРѕРµРґРёРЅРµРЅРёРµ СЃ Р‘Р”
         Connector connector=new Connector();
         Connection connection=connector.getConnection();
-        
-        //Отправляем SQL-запрос к БД
+
+        //РћС‚РїСЂР°РІР»СЏРµРј SQL-Р·Р°РїСЂРѕСЃ Рє Р‘Р”
         String sqlQuery="DELETE FROM "+getTableName()+" WHERE id="+entity.getId();
         connection.createStatement().execute(sqlQuery);
         return true;
     };
-    
+
     public ArrayList<E> getAll() throws SQLException{
-        
-        //Создаем соединение с БД
+
+        //РЎРѕР·РґР°РµРј СЃРѕРµРґРёРЅРµРЅРёРµ СЃ Р‘Р”
         Connector connector=new Connector();
         Connection connection=connector.getConnection();
-        
-        //Отправляем SQL-запрос к БД
+
+        //РћС‚РїСЂР°РІР»СЏРµРј SQL-Р·Р°РїСЂРѕСЃ Рє Р‘Р”
         String sqlQuery="SELECT * FROM "+getTableName();
         ResultSet rs= connection.createStatement().executeQuery(sqlQuery);
-        
-        //добавляем в коллекцию все сущности из БД
+
+        //РґРѕР±Р°РІР»СЏРµРј РІ РєРѕР»Р»РµРєС†РёСЋ РІСЃРµ СЃСѓС‰РЅРѕСЃС‚Рё РёР· Р‘Р”
         ArrayList<E> entities = new ArrayList<>();
         while(rs.next()){
             entities.add(toCollectEntity(rs));
@@ -89,16 +89,16 @@ public abstract class AbstractDao <E extends Entity> {
         connector.close();
         return entities;
     };
-    
-    
+
+
     protected abstract String getTableName();
     protected abstract String getColumnId();
-    
-    //Требуется переопределить SQL-запрос на создание сущности
+
+    //РўСЂРµР±СѓРµС‚СЃСЏ РїРµСЂРµРѕРїСЂРµРґРµР»РёС‚СЊ SQL-Р·Р°РїСЂРѕСЃ РЅР° СЃРѕР·РґР°РЅРёРµ СЃСѓС‰РЅРѕСЃС‚Рё
     public abstract String getCreateSqlQuery(E entity);
-    //Требуется переопределить SQL-запрос на обновление сущности
+    //РўСЂРµР±СѓРµС‚СЃСЏ РїРµСЂРµРѕРїСЂРµРґРµР»РёС‚СЊ SQL-Р·Р°РїСЂРѕСЃ РЅР° РѕР±РЅРѕРІР»РµРЅРёРµ СЃСѓС‰РЅРѕСЃС‚Рё
     public abstract String getUpdateSqlQuery(E entity);
-    //Требуется переопределить метод создания сущности
+    //РўСЂРµР±СѓРµС‚СЃСЏ РїРµСЂРµРѕРїСЂРµРґРµР»РёС‚СЊ РјРµС‚РѕРґ СЃРѕР·РґР°РЅРёСЏ СЃСѓС‰РЅРѕСЃС‚Рё
     protected abstract E toCollectEntity(ResultSet rs) throws SQLException;
-    
+
 }

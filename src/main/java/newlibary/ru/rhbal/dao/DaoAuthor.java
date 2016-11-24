@@ -19,8 +19,8 @@ import newlibary.ru.rhbal.entity.Author;
  * @author User
  */
 public class DaoAuthor extends AbstractDao<Author>{
-    
-   
+
+
     @Override
     public String getCreateSqlQuery(Author entity) {
         return "INSERT INTO "+getTableName()+" ("+getColumnName()+", "+getColumnAge()+") VALUES('"+entity.getName()+"',"+entity.getAge()+")";
@@ -38,24 +38,24 @@ public class DaoAuthor extends AbstractDao<Author>{
 
     @Override
     protected Author toCollectEntity(ResultSet rs) throws SQLException {
-            Author author = new Author();
-            author.setId(rs.getInt(getColumnId()));
-            author.setName(rs.getString(getColumnName()));
-            author.setAge(rs.getInt(getColumnAge()));
-            return author;
+        Author author = new Author();
+        author.setId(rs.getInt(getColumnId()));
+        author.setName(rs.getString(getColumnName()));
+        author.setAge(rs.getInt(getColumnAge()));
+        return author;
     }
 
     @Override
     protected String getColumnId() {
         return "id";
     }
-    
+
     protected String getColumnName() {
         return "name";
     }
-    
+
     protected String getColumnAge() {
         return "age";
     }
-    
+
 }

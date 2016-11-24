@@ -7,14 +7,14 @@ package newlibary.ru.rhbal.consoleinterface;
 
 import java.sql.SQLException;
 import java.util.Scanner;
-import newlibary.ru.rhbal.dao.exception.NotCorrectPasswordException;
-import newlibary.ru.rhbal.dao.exception.UserAlreadyExistException;
-import newlibary.ru.rhbal.dao.exception.UserNotFoundException;
+
+import newlibary.ru.rhbal.manager.exception.NotCorrectPasswordException;
+import newlibary.ru.rhbal.manager.exception.UserAlreadyExistException;
+import newlibary.ru.rhbal.manager.exception.UserNotFoundException;
 import newlibary.ru.rhbal.facade.Facade;
 import newlibary.ru.rhbal.manager.UserInSystem;
 
 /**
- *
  * @author User
  */
 public class ConsoleInterface {
@@ -40,8 +40,8 @@ public class ConsoleInterface {
                 } else {
                     unAutharizationAction();
                 }
-            } catch (SQLException e) {
-                System.out.println("Ошибка SQL-запроса");
+            } catch (SQLException ex) {
+                System.out.println(ex.getMessage());
             }
 
         }
@@ -52,7 +52,7 @@ public class ConsoleInterface {
     }
 
     private void unAutharizationAction() throws SQLException {
-        System.out.println("Вы можете:\n1.Зарегистрироваться\n2.Авторизироваться\n0.Выйти");
+        System.out.println("Р’С‹ РјРѕР¶РµС‚Рµ:\n1.Р—Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°С‚СЊСЃСЏ\n2.РђРІС‚РѕСЂРёР·РёСЂРѕРІР°С‚СЊСЃСЏ\n0.Р’С‹Р№С‚Рё");
         String line = scanner.nextLine();
         switch (line) {
             case "1":
@@ -65,13 +65,13 @@ public class ConsoleInterface {
                 System.exit(0);
                 break;
             default:
-                System.out.println("Неверно введено действие");
+                System.out.println("РќРµРІРµСЂРЅРѕ РІРІРµРґРµРЅРѕ РґРµР№СЃС‚РІРёРµ");
         }
     }
 
     private void authorizationAction() throws SQLException {
-        System.out.println("Вы можете:\n1.Работать с книгами\n2.Работать с читателями"
-                + "\n3.Работать с учетными записями\n 4.Работать с авторами\n0.Выйти");
+        System.out.println("Р’С‹ РјРѕР¶РµС‚Рµ:\n1.Р Р°Р±РѕС‚Р°С‚СЊ СЃ РєРЅРёРіР°РјРё\n2.Р Р°Р±РѕС‚Р°С‚СЊ СЃ С‡РёС‚Р°С‚РµР»СЏРјРё"
+                + "\n3.Р Р°Р±РѕС‚Р°С‚СЊ СЃ СѓС‡РµС‚РЅС‹РјРё Р·Р°РїРёСЃСЏРјРё\n4.Р Р°Р±РѕС‚Р°С‚СЊ СЃ Р°РІС‚РѕСЂР°РјРё\n0.Р’С‹Р№С‚Рё");
         String line = scanner.nextLine();
         switch (line) {
             case "1":
@@ -90,41 +90,42 @@ public class ConsoleInterface {
                 System.exit(0);
                 break;
             default:
-                System.out.println("Неверно введено действие");
+                System.out.println("РќРµРІРµСЂРЅРѕ РІРІРµРґРµРЅРѕ РґРµР№СЃС‚РІРёРµ");
         }
     }
 
     private void registration() throws SQLException {
-        System.out.println("Введите логин: ");
-        String login = scanner.nextLine();
-        System.out.println("Введите пароль: ");
-        String password = scanner.nextLine();
-        System.out.println("Введите Фамилию: ");
-        String lastName = scanner.nextLine();
-        System.out.println("Введите Имя: ");
-        String firstName = scanner.nextLine();
-        System.out.println("Введите Отчество: ");
-        String surname = scanner.nextLine();
-        System.out.println("Введите Возраст: ");
-        int age = scanner.nextInt();
         try {
+            System.out.println("Р’РІРµРґРёС‚Рµ Р»РѕРіРёРЅ: ");
+            String login = scanner.nextLine();
+            System.out.println("Р’РІРµРґРёС‚Рµ РїР°СЂРѕР»СЊ: ");
+            String password = scanner.nextLine();
+            System.out.println("Р’РІРµРґРёС‚Рµ Р¤Р°РјРёР»РёСЋ: ");
+            String lastName = scanner.nextLine();
+            System.out.println("Р’РІРµРґРёС‚Рµ РРјСЏ: ");
+            String firstName = scanner.nextLine();
+            System.out.println("Р’РІРµРґРёС‚Рµ РћС‚С‡РµСЃС‚РІРѕ: ");
+            String surname = scanner.nextLine();
+            System.out.println("Р’РІРµРґРёС‚Рµ Р’РѕР·СЂР°СЃС‚: ");
+            int age = new Integer(scanner.nextLine());
+
             facade.createAccount(login, password, lastName, firstName, surname, age);
         } catch (UserAlreadyExistException ex) {
-            System.out.println("Пользователь уже существует!");
+            System.out.println(ex.getMessage());
+        } catch (NumberFormatException ex) {
+            System.out.println("РќРµРІРµСЂРЅРѕ РІРІРµРґРµРЅ СЃРёРјРІРѕР»");
         }
     }
 
     private void authorization() throws SQLException {
-        System.out.println("Введите логин: ");
+        System.out.println("Р’РІРµРґРёС‚Рµ Р»РѕРіРёРЅ: ");
         String login = scanner.nextLine();
-        System.out.println("Введите пароль: ");
+        System.out.println("Р’РІРµРґРёС‚Рµ РїР°СЂРѕР»СЊ: ");
         String password = scanner.nextLine();
         try {
             facade.login(login, password);
-        } catch (UserNotFoundException ex) {
-            System.out.println("Пользователь не найден");
-        } catch (NotCorrectPasswordException ex) {
-            System.out.println("Пароль введен неверно");
+        } catch (UserNotFoundException | NotCorrectPasswordException ex) {
+            System.out.println(ex.getMessage());
         }
     }
 

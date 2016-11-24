@@ -7,11 +7,12 @@ package newlibary.ru.rhbal.consoleinterface;
 
 import java.sql.SQLException;
 import java.util.Scanner;
-import newlibary.ru.rhbal.dao.exception.UserAlreadyExistException;
+
+import newlibary.ru.rhbal.manager.exception.UserAlreadyExistException;
 import newlibary.ru.rhbal.facade.Facade;
+import newlibary.ru.rhbal.manager.exception.EntityNotFoundException;
 
 /**
- *
  * @author User
  */
 public class ReaderInterface {
@@ -23,13 +24,13 @@ public class ReaderInterface {
     public ReaderInterface() {
         facade = new Facade();
         scanner = new Scanner(System.in);
-        getterAll=new GetterAll(facade);
+        getterAll = new GetterAll(facade);
     }
 
     public void working() throws SQLException {
-        boolean end=false;
+        boolean end = false;
         while (!end) {
-            System.out.println("Вы можете:\n1.Добавить читателя\n2.Удалить читателя\n3.Изменить читателя\n4.Вывести всех читателей\n0.Вернуться на предыдущий экран");
+            System.out.println("Р’С‹ РјРѕР¶РµС‚Рµ:\n1.Р”РѕР±Р°РІРёС‚СЊ С‡РёС‚Р°С‚РµР»СЏ\n2.РЈРґР°Р»РёС‚СЊ С‡РёС‚Р°С‚РµР»СЏ\n3.РР·РјРµРЅРёС‚СЊ С‡РёС‚Р°С‚РµР»СЏ\n4.Р’С‹РІРµСЃС‚Рё РІСЃРµС… С‡РёС‚Р°С‚РµР»РµР№\n0.Р’РµСЂРЅСѓС‚СЊСЃСЏ РЅР° РїСЂРµРґС‹РґСѓС‰РёР№ СЌРєСЂР°РЅ");
             String line = scanner.nextLine();
             switch (line) {
                 case "1":
@@ -45,51 +46,66 @@ public class ReaderInterface {
                     getterAll.getAllReader();
                     break;
                 case "0":
-                    end=true;
+                    end = true;
                     break;
                 default:
-                    System.out.println("Неверно введено действие");
+                    System.out.println("РќРµРІРµСЂРЅРѕ РІРІРµРґРµРЅРѕ РґРµР№СЃС‚РІРёРµ");
             }
         }
     }
 
     private void create() throws SQLException {
-        System.out.println("Введите Фамилию читателя: ");
-        String lastName = scanner.nextLine();
-        System.out.println("Введите Имя читателя: ");
-        String firstName = scanner.nextLine();
-        System.out.println("Введите Отчество читателя: ");
-        String surname = scanner.nextLine();
-        System.out.println("Введите возраст читателя: ");
-        int age = scanner.nextInt();
         try {
+            System.out.println("Р’РІРµРґРёС‚Рµ Р¤Р°РјРёР»РёСЋ С‡РёС‚Р°С‚РµР»СЏ: ");
+            String lastName = scanner.nextLine();
+            System.out.println("Р’РІРµРґРёС‚Рµ РРјСЏ С‡РёС‚Р°С‚РµР»СЏ: ");
+            String firstName = scanner.nextLine();
+            System.out.println("Р’РІРµРґРёС‚Рµ РћС‚С‡РµСЃС‚РІРѕ С‡РёС‚Р°С‚РµР»СЏ: ");
+            String surname = scanner.nextLine();
+            System.out.println("Р’РІРµРґРёС‚Рµ РІРѕР·СЂР°СЃС‚ С‡РёС‚Р°С‚РµР»СЏ: ");
+            int age = new Integer(scanner.nextLine());
+
             facade.createAccount(lastName, firstName, surname, age);
         } catch (UserAlreadyExistException ex) {
-            System.out.println("Такой читатель уже существует");
+            System.out.println("РўР°РєРѕР№ С‡РёС‚Р°С‚РµР»СЊ СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚");
+        } catch (NumberFormatException ex) {
+            System.out.println("РќРµРІРµСЂРЅРѕ РІРІРµРґРµРЅ СЃРёРјРІРѕР»");
         }
     }
 
     private void delete() throws SQLException {
-        System.out.println("Введите номер читателя, которого хотите удалить: ");
-        getterAll.getAllReader();
-        int number= scanner.nextInt();
-        facade.deleteAccount(number);
+        try {
+            System.out.println("Р’РІРµРґРёС‚Рµ РЅРѕРјРµСЂ С‡РёС‚Р°С‚РµР»СЏ, РєРѕС‚РѕСЂРѕРіРѕ С…РѕС‚РёС‚Рµ СѓРґР°Р»РёС‚СЊ: ");
+            getterAll.getAllReader();
+            int number = new Integer(scanner.nextLine());
+            facade.deleteAccount(number);
+        } catch (EntityNotFoundException ex) {
+            System.out.println(ex.getMessage());
+        } catch (NumberFormatException ex) {
+            System.out.println("РќРµРІРµСЂРЅРѕ РІРІРµРґРµРЅ СЃРёРјРІРѕР»");
+        }
     }
 
     private void edit() throws SQLException {
-        System.out.println("Введите номер читателя, которого хотите изменить: ");
-        getterAll.getAllReader();
-        int number= scanner.nextInt();
-        System.out.println("Введите новую Фамилию читателя: ");
-        String newLastName = scanner.nextLine();
-        System.out.println("Введите новое Имя читателя: ");
-        String newFirstName = scanner.nextLine();
-        System.out.println("Введите новое Отчество читателя: ");
-        String newSurname = scanner.nextLine();
-        System.out.println("Введите новый возраст читателя: ");
-        int newAge = scanner.nextInt();
-        facade.editAccount(number, newLastName, newFirstName, newSurname, newAge);
+        try {
+            System.out.println("Р’РІРµРґРёС‚Рµ РЅРѕРјРµСЂ С‡РёС‚Р°С‚РµР»СЏ, РєРѕС‚РѕСЂРѕРіРѕ С…РѕС‚РёС‚Рµ РёР·РјРµРЅРёС‚СЊ: ");
+            getterAll.getAllReader();
+            int number = new Integer(scanner.nextLine());
+            System.out.println("Р’РІРµРґРёС‚Рµ РЅРѕРІСѓСЋ Р¤Р°РјРёР»РёСЋ С‡РёС‚Р°С‚РµР»СЏ: ");
+            String newLastName = scanner.nextLine();
+            System.out.println("Р’РІРµРґРёС‚Рµ РЅРѕРІРѕРµ РРјСЏ С‡РёС‚Р°С‚РµР»СЏ: ");
+            String newFirstName = scanner.nextLine();
+            System.out.println("Р’РІРµРґРёС‚Рµ РЅРѕРІРѕРµ РћС‚С‡РµСЃС‚РІРѕ С‡РёС‚Р°С‚РµР»СЏ: ");
+            String newSurname = scanner.nextLine();
+            System.out.println("Р’РІРµРґРёС‚Рµ РЅРѕРІС‹Р№ РІРѕР·СЂР°СЃС‚ С‡РёС‚Р°С‚РµР»СЏ: ");
+            int newAge = scanner.nextInt();
+            facade.editAccount(number, newLastName, newFirstName, newSurname, newAge);
+        } catch (EntityNotFoundException ex) {
+            System.out.println(ex.getMessage());
+        } catch (NumberFormatException ex) {
+            System.out.println("РќРµРІРµСЂРЅРѕ РІРІРµРґРµРЅ СЃРёРјРІРѕР»");
+        }
     }
 
-    
+
 }

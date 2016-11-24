@@ -6,7 +6,7 @@
 package newlibary.ru.rhbal.entity;
 
 
-//Перечисления статуса книги
+//РџРµСЂРµС‡РёСЃР»РµРЅРёСЏ СЃС‚Р°С‚СѓСЃР° РєРЅРёРіРё
 public enum Status {
     TAKEN,
     INSTOCK;

@@ -10,14 +10,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-//Класс, хранящий списки сущностей программы
+//РљР»Р°СЃСЃ, С…СЂР°РЅСЏС‰РёР№ СЃРїРёСЃРєРё СЃСѓС‰РЅРѕСЃС‚РµР№ РїСЂРѕРіСЂР°РјРјС‹
 public class Model {
     private ArrayList<Author> authors;
     private ArrayList<Book> books;
     private ArrayList<Reader> readers;
-    
+
     private static Model INSTANCE;
-    
+
     private Model(){
         authors=new ArrayList<>();
         books=new ArrayList<>();
@@ -41,5 +41,5 @@ public class Model {
     public ArrayList<Reader> getReaders() {
         return readers;
     }
-    
+
 }

@@ -15,8 +15,8 @@ import newlibary.ru.rhbal.entity.Reader;
  * @author User
  */
 public class DaoReader extends AbstractDao<Reader>{
-    
-    
+
+
     @Override
     protected String getTableName() {
         return "reader";
@@ -26,9 +26,9 @@ public class DaoReader extends AbstractDao<Reader>{
     public String getCreateSqlQuery(Reader entity) {
         if(entity.getLogin()==null || entity.getPassword()==null)
             return "INSERT INTO "+getTableName()+" ("+getColumnFirstName()+", "+getColumnLastName()+", "+getColumnSurname()+", "+getColumnAge()+") VALUES('"+
-                entity.getFirstName()+"','"+entity.getLastName()+"','"+entity.getSurname()+"',"+entity.getAge()+")";
-        
-       return "INSERT INTO "+getTableName()+" ("+getColumnLogin()+", "+getColumnPassword()+", "+getColumnFirstName()+", "+getColumnLastName()+", "+
+                    entity.getFirstName()+"','"+entity.getLastName()+"','"+entity.getSurname()+"',"+entity.getAge()+")";
+
+        return "INSERT INTO "+getTableName()+" ("+getColumnLogin()+", "+getColumnPassword()+", "+getColumnFirstName()+", "+getColumnLastName()+", "+
                 getColumnSurname()+", "+getColumnAge()+") VALUES('"+entity.getLogin()+"','"+entity.getPassword()+"','"+entity.getFirstName()+"','"+entity.getLastName()+"','"+entity.getSurname()+
                 "',"+entity.getAge()+")";
     }
@@ -50,34 +50,34 @@ public class DaoReader extends AbstractDao<Reader>{
         reader.setAge(rs.getInt(getColumnAge()));
         reader.setLogin(rs.getString(getColumnLogin()));
         reader.setPassword(rs.getString(getColumnPassword()));
-        return reader;     
+        return reader;
     }
 
     @Override
     protected String getColumnId() {
         return "id";
     }
-    
+
     protected String getColumnLogin() {
         return "login";
     }
-    
+
     protected String getColumnPassword() {
         return "password";
     }
-    
+
     protected String getColumnLastName() {
         return "lastName";
     }
-    
+
     protected String getColumnFirstName() {
         return "firstName";
     }
-    
+
     protected String getColumnSurname() {
         return "surname";
     }
-    
+
     protected String getColumnAge() {
         return "age";
     }

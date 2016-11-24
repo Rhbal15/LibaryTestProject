@@ -9,7 +9,7 @@ import java.util.GregorianCalendar;
 
 
 
-//Сущность учета данных о взятой читателем книге
+//РЎСѓС‰РЅРѕСЃС‚СЊ СѓС‡РµС‚Р° РґР°РЅРЅС‹С… Рѕ РІР·СЏС‚РѕР№ С‡РёС‚Р°С‚РµР»РµРј РєРЅРёРіРµ
 public class BookStatus extends Entity<Integer>{
     private int id;
     private Book book;
@@ -23,7 +23,6 @@ public class BookStatus extends Entity<Integer>{
         this.reader=reader;
         this.mustBeReturned = mustBeReturned;
         this.timeReceipt=new GregorianCalendar();
-        book.setStatus(Status.TAKEN);
     }
 
     public BookStatus() {
@@ -78,5 +77,5 @@ public class BookStatus extends Entity<Integer>{
         this.reader = reader;
     }
 
-    
+
 }

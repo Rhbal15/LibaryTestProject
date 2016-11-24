@@ -8,7 +8,7 @@ package newlibary.ru.rhbal.entity;
 
 
 
-//Сущность книг
+//РЎСѓС‰РЅРѕСЃС‚СЊ РєРЅРёРі
 public class Book extends Entity<Integer>{
     private int id;
     private Author author;
@@ -16,7 +16,7 @@ public class Book extends Entity<Integer>{
     private int release;
     private Status status;
     private String genre;
-    
+
     public Book(Author author, String name, int release, String genre) {
         this.author = author;
         this.name = name;
@@ -28,7 +28,7 @@ public class Book extends Entity<Integer>{
     public Book() {
     }
 
-     public void setStatus(Status status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
@@ -39,7 +39,7 @@ public class Book extends Entity<Integer>{
     public void setId(int id) {
         this.id = id;
     }
-    
+
     public Author getAuthor() {
         return author;
     }

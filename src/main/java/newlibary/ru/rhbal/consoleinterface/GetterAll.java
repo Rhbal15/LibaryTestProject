@@ -18,32 +18,42 @@ public class GetterAll {
     public GetterAll(Facade facade) {
         this.facade=facade;
     }
-    
-    
+
+
     public void getAllBook() throws SQLException {
         for (int i = 0; i < facade.getAllBook().size(); i++) {
-            System.out.println(facade.getAllBook().get(i).getId()+" Íàçâàíèå:"+facade.getAllBook().get(i).getName()+
-                    " Àâòîð: "+facade.getAllBook().get(i).getAuthor().getName()+
-                    " Æàíð: "+facade.getAllBook().get(i).getGenre()+
-                    " Ãîä âûïóñêà: "+facade.getAllBook().get(i).getRelease());
+            System.out.println(facade.getAllBook().get(i).getId()+" ÐÐ°Ð·Ð²Ð°Ð½Ð¸Ðµ:"+facade.getAllBook().get(i).getName()+
+                    " ÐÐ²Ñ‚Ð¾Ñ€: "+facade.getAllBook().get(i).getAuthor().getName()+
+                    " Ð–Ð°Ð½Ñ€: "+facade.getAllBook().get(i).getGenre()+
+                    " Ð“Ð¾Ð´ Ð²Ñ‹Ð¿ÑƒÑÐºÐ°: "+facade.getAllBook().get(i).getRelease());
         }
     }
-    
+
+    public void getAllBookInStock() throws SQLException {
+        for (int i = 0; i < facade.getBookInStock().size(); i++) {
+            System.out.println(facade.getAllBook().get(i).getId()+" ÐÐ°Ð·Ð²Ð°Ð½Ð¸Ðµ:"+facade.getAllBook().get(i).getName()+
+                    " ÐÐ²Ñ‚Ð¾Ñ€: "+facade.getAllBook().get(i).getAuthor().getName()+
+                    " Ð–Ð°Ð½Ñ€: "+facade.getAllBook().get(i).getGenre()+
+                    " Ð“Ð¾Ð´ Ð²Ñ‹Ð¿ÑƒÑÐºÐ°: "+facade.getAllBook().get(i).getRelease());
+        }
+    }
+
     public void getAllReader() throws SQLException {
         for (int i = 0; i < facade.getAllReader().size(); i++) {
-            System.out.println(facade.getAllReader().get(i).getId() + " Ôàìèëèÿ: " + facade.getAllReader().get(i).getLastName()
-                    + " Èìÿ: " + facade.getAllReader().get(i).getFirstName() + " Îò÷åñòâî: "
-                    + facade.getAllReader().get(i).getFirstName() + " Âîçðàñò: "
+            System.out.println(facade.getAllReader().get(i).getId() + " Ð¤Ð°Ð¼Ð¸Ð»Ð¸Ñ: " + facade.getAllReader().get(i).getLastName()
+                    + " Ð˜Ð¼Ñ: " + facade.getAllReader().get(i).getFirstName() + " ÐžÑ‚Ñ‡ÐµÑÑ‚Ð²Ð¾: "
+                    + facade.getAllReader().get(i).getFirstName() + " Ð’Ð¾Ð·Ñ€Ð°ÑÑ‚: "
                     + facade.getAllReader().get(i).getAge());
         }
     }
-    
+
     public void getAllAuthor() throws SQLException{
         for(int i=0;i<facade.getAllAuthors().size();i++){
             System.out.println(facade.getAllAuthors().get(i).getId()+
-                    "Èìÿ àâòîðà: "+facade.getAllAuthors().get(i).getName()+
-                    "Ãîäæ ðîæäåíèÿ: "+facade.getAllAuthors().get(i).getAge()
+                    "Ð˜Ð¼Ñ Ð°Ð²Ñ‚Ð¾Ñ€Ð°: "+facade.getAllAuthors().get(i).getName()+
+                    "Ð“Ð¾Ð´Ð¶ Ñ€Ð¾Ð¶Ð´ÐµÐ½Ð¸Ñ: "+facade.getAllAuthors().get(i).getAge()
             );
         }
     }
+
 }

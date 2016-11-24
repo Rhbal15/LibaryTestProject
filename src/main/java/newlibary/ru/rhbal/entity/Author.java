@@ -8,7 +8,7 @@ package newlibary.ru.rhbal.entity;
 
 
 
-//Сущность авторов книг
+//РЎСѓС‰РЅРѕСЃС‚СЊ Р°РІС‚РѕСЂРѕРІ РєРЅРёРі
 public class Author extends Entity<Integer>{
     private int id;
     private String name;
@@ -21,8 +21,8 @@ public class Author extends Entity<Integer>{
 
     public Author() {
     }
-    
-    
+
+
 
     public String getName() {
         return name;
@@ -48,8 +48,8 @@ public class Author extends Entity<Integer>{
     public Integer getId() {
         return id;
     }
-    
-    
-    
-    
+
+
+
+
 }

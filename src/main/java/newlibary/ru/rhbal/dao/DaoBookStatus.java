@@ -18,8 +18,8 @@ import newlibary.ru.rhbal.entity.BookStatus;
  *
  * @author User
  */
-public class DaoBookStatus extends AbstractDao<BookStatus>{
-    
+public class DaoBookStatus extends AbstractDao<BookStatus> {
+
     @Override
     protected String getTableName() {
         return "bookstatus";
@@ -27,45 +27,54 @@ public class DaoBookStatus extends AbstractDao<BookStatus>{
 
     @Override
     public String getCreateSqlQuery(BookStatus entity) {
-        if(entity.getTimeReturn()!=null)
-            return "INSERT INTO "+getTableName()+" ("+getColumnTimeReceipt()+", "+getColumnTimeReturn()+", "+getColumnMustBeReturned()+", "+
-                getColumnBook()+", "+getColumnReader()+") VALUES("+gregorianCalendarToString(entity.getTimeReceipt())+","+
-                gregorianCalendarToString(entity.getTimeReturn())+","+gregorianCalendarToString(entity.getMustBeReturned())+","+
-                entity.getBook().getId()+","+entity.getReader().getId()+")";
-        
-        return "INSERT INTO "+getTableName()+" ("+getColumnTimeReceipt()+", "+getColumnMustBeReturned()+", "+
-                getColumnBook()+", "+getColumnReader()+") VALUES("+gregorianCalendarToString(entity.getTimeReceipt())+","+
-                gregorianCalendarToString(entity.getMustBeReturned())+","+entity.getBook().getId()+","+entity.getReader().getId()+")";
+        if (entity.getTimeReturn() != null) {
+            return "INSERT INTO " + getTableName() + " (" + getColumnTimeReceipt() + ", " + getColumnTimeReturn() + ", " + getColumnMustBeReturned() + ", "
+                    + getColumnBook() + ", " + getColumnReader() + ") VALUES(" + gregorianCalendarToString(entity.getTimeReceipt()) + ","
+                    + gregorianCalendarToString(entity.getTimeReturn()) + "," + gregorianCalendarToString(entity.getMustBeReturned()) + ","
+                    + entity.getBook().getId() + "," + entity.getReader().getId() + ")";
+        }
+
+        return "INSERT INTO " + getTableName() + " (" + getColumnTimeReceipt() + ", " + getColumnMustBeReturned() + ", "
+                + getColumnBook() + ", " + getColumnReader() + ") VALUES(" + gregorianCalendarToString(entity.getTimeReceipt()) + ","
+                + gregorianCalendarToString(entity.getMustBeReturned()) + "," + entity.getBook().getId() + "," + entity.getReader().getId() + ")";
     }
 
     @Override
     public String getUpdateSqlQuery(BookStatus entity) {
-        if(entity.getTimeReturn()!=null)
-            return "UPDATE "+getTableName()+" SET "+getColumnTimeReceipt()+"= "+gregorianCalendarToString(entity.getTimeReceipt())+
-                ", "+getColumnTimeReturn()+"="+gregorianCalendarToString(entity.getTimeReturn())+", "+getColumnTimeReturn()+"="+
-                gregorianCalendarToString(entity.getMustBeReturned())+" WHERE id="+entity.getId();
-        
-        return "UPDATE "+getTableName()+" SET "+getColumnTimeReceipt()+"= "+gregorianCalendarToString(entity.getTimeReceipt())+
-                ", "+getColumnTimeReturn()+"="+gregorianCalendarToString(entity.getMustBeReturned())+" WHERE id="+entity.getId();
+        if (entity.getTimeReturn() != null) {
+            return "UPDATE " + getTableName() + " SET " + getColumnTimeReceipt() + "= " + gregorianCalendarToString(entity.getTimeReceipt())
+                    + ", " + getColumnTimeReturn() + "=" + gregorianCalendarToString(entity.getTimeReturn()) + ", " + getColumnMustBeReturned() + "="
+                    + gregorianCalendarToString(entity.getMustBeReturned()) + " WHERE id=" + entity.getId();
+        }
+
+        return "UPDATE " + getTableName() + " SET " + getColumnTimeReceipt() + "= " + gregorianCalendarToString(entity.getTimeReceipt())
+                + ", " + getColumnTimeReturn() + "=" + gregorianCalendarToString(entity.getMustBeReturned()) + " WHERE id=" + entity.getId();
     }
-    
-    private String gregorianCalendarToString(GregorianCalendar gc){
-        return "'"+gc.get(Calendar.YEAR)+"-"+gc.get(Calendar.MONTH)+"-"+gc.get(Calendar.DAY_OF_MONTH)+"'";
+
+    private String gregorianCalendarToString(GregorianCalendar gc) {
+        return "'" + gc.get(Calendar.YEAR) + "-" + gc.get(Calendar.MONTH) + "-" + gc.get(Calendar.DAY_OF_MONTH) + "'";
     }
 
     @Override
     protected BookStatus toCollectEntity(ResultSet rs) throws SQLException {
+
         BookStatus bookStatus = new BookStatus();
+
         bookStatus.setId(rs.getInt(getColumnId()));
         bookStatus.setBook(new DaoBook().getById(rs.getInt(getColumnBook())));
         bookStatus.setReader(new DaoReader().getById(rs.getInt(getColumnReader())));
         Date timeReceipt = rs.getDate(getColumnTimeReceipt());
-        bookStatus.setTimeReceipt(new GregorianCalendar(timeReceipt.getYear(), timeReceipt.getMonth(), timeReceipt.getDate()));
+
+        bookStatus.setTimeReceipt(dateToGreagorianCalendarConverter(timeReceipt));
         Date timeReturn = rs.getDate(getColumnTimeReturn());
-        if(timeReturn!=null)
-            bookStatus.setTimeReturn(new GregorianCalendar(timeReturn.getYear(), timeReturn.getMonth(), timeReturn.getDate()));
+
+        if (timeReturn != null) {
+            bookStatus.setTimeReturn(dateToGreagorianCalendarConverter(timeReturn));
+        }
+
         Date mustBeReturned = rs.getDate(getColumnMustBeReturned());
-        bookStatus.setMustBeReturned(new GregorianCalendar(mustBeReturned.getYear(), mustBeReturned.getMonth(), mustBeReturned.getDate()));
+
+        bookStatus.setMustBeReturned(dateToGreagorianCalendarConverter(mustBeReturned));
         return bookStatus;
     }
 
@@ -73,25 +82,29 @@ public class DaoBookStatus extends AbstractDao<BookStatus>{
     protected String getColumnId() {
         return "id";
     }
-    
+
     protected String getColumnTimeReceipt() {
         return "timeReceipt";
     }
-    
+
     protected String getColumnTimeReturn() {
         return "timeReturn";
     }
-    
+
     protected String getColumnMustBeReturned() {
         return "mustBeReturned";
     }
-    
+
     protected String getColumnBook() {
         return "idBook";
     }
-    
+
     protected String getColumnReader() {
         return "idReader";
     }
-    
+
+    private GregorianCalendar dateToGreagorianCalendarConverter(Date date) {
+        return new GregorianCalendar(date.getYear() + 1900, date.getMonth() + 1, date.getDate());
+    }
+
 }

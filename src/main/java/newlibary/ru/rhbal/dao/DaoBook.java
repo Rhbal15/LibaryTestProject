@@ -7,7 +7,6 @@ package newlibary.ru.rhbal.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import newlibary.ru.rhbal.entity.Book;
 import newlibary.ru.rhbal.entity.Status;
 
@@ -16,7 +15,7 @@ import newlibary.ru.rhbal.entity.Status;
  * @author User
  */
 public class DaoBook extends AbstractDao<Book>{
-  
+
 
     @Override
     protected String getTableName() {
@@ -54,27 +53,27 @@ public class DaoBook extends AbstractDao<Book>{
     protected String getColumnId() {
         return "id";
     }
-    
+
     protected String getColumnAuthor() {
         return "idAuthor";
     }
-    
+
     protected String getColumnName() {
         return "name";
     }
-    
+
     protected String getColumnRelease() {
         return "release";
     }
-    
+
     protected String getColumnStatus() {
         return "status";
     }
-    
+
     protected String getColumnGenre() {
         return "genre";
     }
-    
+
 }
 
 

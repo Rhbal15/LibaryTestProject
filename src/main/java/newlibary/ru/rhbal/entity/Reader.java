@@ -6,10 +6,9 @@
 package newlibary.ru.rhbal.entity;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 
-//Сущность читателей
+//РЎСѓС‰РЅРѕСЃС‚СЊ С‡РёС‚Р°С‚РµР»РµР№
 public class Reader extends Entity<Integer>{
     private int id;
     private String lastName;
@@ -27,7 +26,7 @@ public class Reader extends Entity<Integer>{
         this.age = age;
         bookStatuses=new ArrayList<>();
     }
-    
+
     public Reader(String login, String password, String LastName, String FirstName, String Surname, int age) {
         this.login=login;
         this.password=password;
@@ -40,7 +39,7 @@ public class Reader extends Entity<Integer>{
 
     public Reader() {
     }
-    
+
     public String getLastName() {
         return lastName;
     }
@@ -56,7 +55,7 @@ public class Reader extends Entity<Integer>{
     public int getAge() {
         return age;
     }
-    
+
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
@@ -105,8 +104,8 @@ public class Reader extends Entity<Integer>{
     public void setPassword(String password) {
         this.password = password;
     }
-    
-    
-    
-    
+
+
+
+
 }
