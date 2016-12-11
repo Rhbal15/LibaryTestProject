@@ -47,8 +47,8 @@ public class Facade {
     //-------------------------------------------------------------------------------------------------
     //Работа с книгами
     //-------------------------------------------------------------------------------------------------
-    public void addBook(String name, int release, String genreName, int authorId) throws SQLException{
-        bc.addBook(name, release, genreName, authorId);
+    public int addBook(String name, int release, String genreName, int authorId) throws SQLException{
+        return bc.addBook(name, release, genreName, authorId);
     }
 
     public void deleteBook(int number) throws SQLException, EntityNotFoundException{
@@ -57,6 +57,10 @@ public class Facade {
 
     public void editBook(int number, String newName,int release,String genreName, int authorId) throws SQLException, EntityNotFoundException{
         bc.editBook(number, newName, release, genreName, authorId);
+    }
+
+    public Book getBookById(int id) throws SQLException {
+        return bc.getBookById(id);
     }
     //-------------------------------------------------------------------------------------------------
 
@@ -72,8 +76,8 @@ public class Facade {
     }
 
     //Создание читателя без доступа к веб-интерфейсу
-    public void createAccount(String lastName,String firstName, String surname, int age) throws UserAlreadyExistException, SQLException{
-        ac.create(lastName, firstName, surname, age);
+    public int createAccount(String lastName,String firstName, String surname, int age) throws UserAlreadyExistException, SQLException{
+        return ac.create(lastName, firstName, surname, age);
     }
 
     public void editAccount(int number,String newLastName,String newFirstName, String newSurname, int newAge) throws SQLException, EntityNotFoundException{
@@ -84,12 +88,16 @@ public class Facade {
         ac.delete(id);
     }
 
-    public ArrayList<Reader> getAllReader() throws SQLException{
+    public ArrayList<Reader> getAllReaders() throws SQLException{
         return ac.getAll();
     }
 
     public void login(String login, String password) throws UserNotFoundException, NotCorrectPasswordException, SQLException{
         ac.login(login, password);
+    }
+
+    public Reader getReaderById(int id) throws SQLException {
+        return ac.getReaderById(id);
     }
     //-------------------------------------------------------------------------------------------------
 
@@ -99,8 +107,8 @@ public class Facade {
     //Работа с учетными записями, сделанными по книгам
     //-------------------------------------------------------------------------------------------------
 
-    public void getBook(int numberReader, int numberBook, GregorianCalendar mustBeReturned) throws SQLException, EntityNotFoundException, BookInTakenNotFoundException{
-        bsc.getBook(numberBook,numberReader, mustBeReturned);
+    public int getBook(int numberReader, int numberBook, GregorianCalendar mustBeReturned) throws SQLException, EntityNotFoundException, BookInTakenNotFoundException{
+        return bsc.getBook(numberBook,numberReader, mustBeReturned);
     }
 
     public void putBook(int numberBook) throws BookInTakenNotFoundException, SQLException{
@@ -123,6 +131,14 @@ public class Facade {
         return bsc.booksIndividualReader(readerNumber);
     }
 
+    public void deleteBookStatus(int id) throws SQLException, EntityNotFoundException {
+        bsc.deleteBookStatus(id);
+    }
+
+    public void putBookRemove(int id) throws BookInTakenNotFoundException, SQLException {
+        bsc.putBookRemove(id);
+    }
+
     //-------------------------------------------------------------------------------------------------
 
 
@@ -130,8 +146,8 @@ public class Facade {
     //-------------------------------------------------------------------------------------------------
     //Работа с авторами
     //-------------------------------------------------------------------------------------------------
-    public void addAuthor(String name,int age) throws SQLException{
-        authc.addAuthor(name, age);
+    public int addAuthor(String name,int age) throws SQLException{
+        return authc.addAuthor(name, age);
     }
 
     public boolean deleteAuthor(int id) throws SQLException, EntityNotFoundException{
@@ -140,6 +156,10 @@ public class Facade {
 
     public void editAuthor(int id, String newName,int newAge) throws SQLException, EntityNotFoundException{
         authc.editAuthor(id, newName, newAge);
+    }
+
+    public Author getAuthorById(int id) throws SQLException {
+        return authc.getAuthorById(id);
     }
 
     public ArrayList<Author> getAllAuthors() throws SQLException{

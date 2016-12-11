@@ -18,7 +18,7 @@ import newlibary.ru.rhbal.entity.Entity;
 public abstract class AbstractDao <E extends Entity> {
 
     //Создание сущности
-    public void create(E entity)throws SQLException{
+    public int create(E entity)throws SQLException{
 
         //Создаем соединение с БД
         Connector connector=new Connector();
@@ -26,7 +26,12 @@ public abstract class AbstractDao <E extends Entity> {
 
         //Отправляем SQL-запрос к БД
         connection.createStatement().executeUpdate(getCreateSqlQuery(entity));
+        ResultSet rs=connection.createStatement().executeQuery("SELECT LAST_INSERT_ID() AS id FROM "+getTableName());
+        rs.first();
+        int id=rs.getInt(getColumnId());
         connector.close();
+
+        return id;
     };
 
     public E getById(int id) throws SQLException{
@@ -55,6 +60,7 @@ public abstract class AbstractDao <E extends Entity> {
         Connection connection=connector.getConnection();
 
         //Отправляем SQL-запрос к БД
+        System.out.println(getUpdateSqlQuery(entity));
         connection.createStatement().execute(getUpdateSqlQuery(entity));
         connection.close();
         return true;
@@ -92,7 +98,7 @@ public abstract class AbstractDao <E extends Entity> {
 
 
     protected abstract String getTableName();
-    protected abstract String getColumnId();
+    protected String getColumnId(){return "id";};
 
     //Требуется переопределить SQL-запрос на создание сущности
     public abstract String getCreateSqlQuery(E entity);

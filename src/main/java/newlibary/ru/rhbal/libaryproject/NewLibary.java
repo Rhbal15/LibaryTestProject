@@ -20,15 +20,15 @@ public class NewLibary {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws UserAlreadyExistException, InterruptedException {
-        try {
+        //try {
             ConsoleInterface ci = new ConsoleInterface();
             ci.consoleInterface();
 
-        } catch (Exception ex) {
+        /*} catch (Exception ex) {
             System.err.println("Непредвиденное исключение, пожалуйста обратитесь к разработчику");
             System.err.println(ex.getClass());
             System.err.println(Arrays.toString(ex.getStackTrace()));
-        }
+        }*/
     }
 
 }

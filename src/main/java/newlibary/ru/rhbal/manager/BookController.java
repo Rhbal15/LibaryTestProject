@@ -26,8 +26,8 @@ public class BookController{
         daoBook=new DaoBook();
     }
 
-    public void addBook(String name, int release, String genreName, int authorId) throws SQLException{
-        daoBook.create(new Book(new DaoAuthor().getById(authorId), name, release,genreName));
+    public int addBook(String name, int release, String genreName, int authorId) throws SQLException{
+        return daoBook.create(new Book(new DaoAuthor().getById(authorId), name, release,genreName));
     }
 
     public boolean deleteBook(int number) throws SQLException, EntityNotFoundException{
@@ -52,6 +52,8 @@ public class BookController{
         book.setRelease(release);
         book.setGenre(genreName);
         book.setAuthor(new DaoAuthor().getById(authorId));
+        
+        daoBook.update(book);
     }
 
     //Метод находящий все книги, которые по имени соотвествуют заданному запросу
@@ -95,5 +97,9 @@ public class BookController{
 
     public ArrayList<Book> getAllBook() throws SQLException{
         return daoBook.getAll();
+    }
+
+    public Book getBookById(int id) throws SQLException {
+        return daoBook.getById(id);
     }
 }

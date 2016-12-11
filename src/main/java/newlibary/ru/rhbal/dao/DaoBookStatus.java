@@ -48,7 +48,8 @@ public class DaoBookStatus extends AbstractDao<BookStatus> {
         }
 
         return "UPDATE " + getTableName() + " SET " + getColumnTimeReceipt() + "= " + gregorianCalendarToString(entity.getTimeReceipt())
-                + ", " + getColumnTimeReturn() + "=" + gregorianCalendarToString(entity.getMustBeReturned()) + " WHERE id=" + entity.getId();
+                + ", " + getColumnMustBeReturned() + "=" + gregorianCalendarToString(entity.getMustBeReturned()) +
+                ", " + getColumnTimeReturn() + "=" + "null" +  " WHERE id=" + entity.getId();
     }
 
     private String gregorianCalendarToString(GregorianCalendar gc) {
@@ -78,10 +79,6 @@ public class DaoBookStatus extends AbstractDao<BookStatus> {
         return bookStatus;
     }
 
-    @Override
-    protected String getColumnId() {
-        return "id";
-    }
 
     protected String getColumnTimeReceipt() {
         return "timeReceipt";

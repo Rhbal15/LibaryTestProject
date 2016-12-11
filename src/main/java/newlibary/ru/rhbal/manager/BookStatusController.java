@@ -40,7 +40,7 @@ public class BookStatusController {
     //-------------------------------------------------------------------------------------------------
     //Методы получения книг читателем
     //-------------------------------------------------------------------------------------------------
-    public void getBook(int numberBook, int numberReader, GregorianCalendar mustBeReturned) throws SQLException, EntityNotFoundException {
+    public int getBook(int numberBook, int numberReader, GregorianCalendar mustBeReturned) throws SQLException, EntityNotFoundException {
 
         Book book=new DaoBook().getById(numberBook);
 
@@ -56,9 +56,11 @@ public class BookStatusController {
         BookStatus bookStatus = new BookStatus(book,reader , mustBeReturned);
         book.setStatus(Status.TAKEN);
         daoBook.update(book);
-        daoBookStatus.create(bookStatus);
+        int id=daoBookStatus.create(bookStatus);
 
         isChanged = true;
+
+        return id;
     }
 
     //-------------------------------------------------------------------------------------------------
@@ -76,6 +78,35 @@ public class BookStatusController {
         daoBook.update(bookStatus.getBook());
 
         isChanged = true;
+    }
+
+    public void putBookRemove(int numberBookStatus) throws SQLException, BookInTakenNotFoundException {
+        BookStatus bookStatus = daoBookStatus.getById(numberBookStatus);
+
+        if (bookStatus == null || bookStatus.getBook().getStatus() == Status.TAKEN) {
+            throw new BookInTakenNotFoundException("Отменить действие не удалось");
+        }
+
+        bookStatus.getBook().setStatus(Status.TAKEN);
+        bookStatus.setTimeReturn(null);
+
+        daoBookStatus.update(bookStatus);
+        daoBook.update(bookStatus.getBook());
+
+        isChanged = true;
+    }
+
+    public boolean deleteBookStatus(int id) throws SQLException, EntityNotFoundException {
+        BookStatus bookStatus=daoBookStatus.getById(id);
+
+        if(bookStatus==null){
+            throw new EntityNotFoundException("Книга не найдена, удаление не произошло");
+        }
+
+        Book book=daoBook.getById(bookStatus.getBook().getId());
+        book.setStatus(Status.INSTOCK);
+        daoBook.update(book);
+        return daoBookStatus.delete(bookStatus);
     }
 
     //Метод возвращает все книги взятые авторизированным в программе пользователем
@@ -96,20 +127,16 @@ public class BookStatusController {
     //Метод возвращающий все учетные записи пользователя
     public ArrayList<BookStatus> getBookStatuses(int numberReader) throws SQLException {
 
-        if (isChanged) {
+        bookStatuses=new ArrayList<>();
+        for (BookStatus value : daoBookStatus.getAll()) {
 
-            bookStatuses=new ArrayList<>();
-            for (BookStatus value : daoBookStatus.getAll()) {
-                if (value.getReader().getId().equals(numberReader)) {
-                    bookStatuses.add(value);
-                }
+            if (value.getReader().getId().equals(numberReader)) {
+                bookStatuses.add(value);
+
             }
-            isChanged=false;
-            return bookStatuses;
         }
-        else{
-            return bookStatuses;
-        }
+        isChanged=false;
+        return bookStatuses;
     }
 
     //Метод возвращает все книги, которые находятся в библиотеке

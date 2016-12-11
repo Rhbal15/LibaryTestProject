@@ -36,19 +36,18 @@ public class ReaderController {
         readerDao.create(new Reader(login, password, lastName, firstName, surname, age));
     }
 
-    public void create(String lastName,String firstName, String surname, int age) throws UserAlreadyExistException, SQLException{
+    public int create(String lastName,String firstName, String surname, int age) throws UserAlreadyExistException, SQLException{
         for(Reader reader: getAll()){
             if(reader.getAge()==age && firstName.equals(reader.getFirstName()) &&
                     lastName.equals(reader.getLastName()) && surname.equals(reader.getSurname()))
                 throw new UserAlreadyExistException("Пользователь уже существует");
         }
-        readerDao.create(new Reader(lastName, firstName, surname, age));
+        return readerDao.create(new Reader(lastName, firstName, surname, age));
     }
 
     //-------------------------------------------------------------------------------------------------
 
     public void editReader(int number,String newLastName,String newFirstName, String newSurname, int newAge) throws SQLException, EntityNotFoundException{
-        //РќР°С…РѕРґРёРј РїРѕ number РєРѕРєРЅСЂРµС‚РЅС‹Р№ Р°РєРєР°СѓРЅС‚
         Reader reader = readerDao.getById(number);
         if(reader==null){
             throw new EntityNotFoundException("Читатель не найден, изменений не прозошло");
@@ -57,7 +56,7 @@ public class ReaderController {
         reader.setLastName(newLastName);
         reader.setFirstName(newFirstName);
         reader.setSurname(newSurname);
-        reader.setAge(newAge);
+        reader.setAge(newAge);   
         readerDao.update(reader);
     }
 
@@ -93,6 +92,10 @@ public class ReaderController {
 
     public ArrayList<Reader> getAll() throws SQLException{
         return readerDao.getAll();
+    }
+
+    public Reader getReaderById(int id) throws SQLException {
+        return readerDao.getById(id);
     }
 
 }

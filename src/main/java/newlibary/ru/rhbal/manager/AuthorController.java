@@ -22,9 +22,9 @@ public class AuthorController {
         daoAuthor=new DaoAuthor();
     }
 
-    public void addAuthor(String name,int age) throws SQLException{
+    public int addAuthor(String name,int age) throws SQLException{
         Author author = new Author(name, age);
-        daoAuthor.create(author);
+        return daoAuthor.create(author);
     }
 
     public boolean deleteAuthor(int id) throws SQLException, EntityNotFoundException{
@@ -50,5 +50,9 @@ public class AuthorController {
 
     public ArrayList<Author> getAll() throws SQLException{
         return daoAuthor.getAll();
+    }
+
+    public Author getAuthorById(int id) throws SQLException {
+        return daoAuthor.getById(id);
     }
 }

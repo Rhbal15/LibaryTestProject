@@ -45,11 +45,6 @@ public class DaoAuthor extends AbstractDao<Author>{
         return author;
     }
 
-    @Override
-    protected String getColumnId() {
-        return "id";
-    }
-
     protected String getColumnName() {
         return "name";
     }

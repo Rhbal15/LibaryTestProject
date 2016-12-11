@@ -6,8 +6,10 @@
 package newlibary.ru.rhbal.consoleinterface;
 
 import java.sql.SQLException;
-import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.Arrays;
 
+import newlibary.ru.rhbal.consoleinterface.entityinterface.*;
 import newlibary.ru.rhbal.manager.exception.NotCorrectPasswordException;
 import newlibary.ru.rhbal.manager.exception.UserAlreadyExistException;
 import newlibary.ru.rhbal.manager.exception.UserNotFoundException;
@@ -20,11 +22,12 @@ import newlibary.ru.rhbal.manager.UserInSystem;
 public class ConsoleInterface {
 
     private Facade facade;
-    private Scanner scanner;
+    private ArrayList<AbstractInterface> workables;
 
     public ConsoleInterface() {
         facade = new Facade();
-        scanner = new Scanner(System.in);
+        workables =  new ArrayList<>(Arrays.asList(new AuthorInterface(),new BookInterface(),new BookStatusInterface(),new ReaderInterface()));
+
     }
 
     public void consoleInterface() {
@@ -52,8 +55,7 @@ public class ConsoleInterface {
     }
 
     private void unAutharizationAction() throws SQLException {
-        System.out.println("Вы можете:\n1.Зарегистрироваться\n2.Авторизироваться\n0.Выйти");
-        String line = scanner.nextLine();
+        String line = ConsoleWorker.getString("Вы можете:\n1.Зарегистрироваться\n2.Авторизироваться\n0.Выйти");
         switch (line) {
             case "1":
                 registration();
@@ -70,46 +72,37 @@ public class ConsoleInterface {
     }
 
     private void authorizationAction() throws SQLException {
-        System.out.println("Вы можете:\n1.Работать с книгами\n2.Работать с читателями"
-                + "\n3.Работать с учетными записями\n4.Работать с авторами\n0.Выйти");
-        String line = scanner.nextLine();
-        switch (line) {
-            case "1":
-                new BookInterface().working();
-                break;
-            case "2":
-                new ReaderInterface().working();
-                break;
-            case "3":
-                new BookStatusInterface().working();
-                break;
-            case "4":
-                new AuthorInterface().working();
-                break;
-            case "0":
+        try {
+            String line = "Вы можете:\n";
+
+            for (int i = 0; i < workables.size(); i++) {
+                line = line.concat((i + 1) + "." + workables.get(i).getName() + "\n");
+            }
+            line = line.concat("0.Выход");
+
+            int lineInt = ConsoleWorker.getInt(line);
+
+            if (lineInt == 0) {
                 System.exit(0);
-                break;
-            default:
-                System.out.println("Неверно введено действие");
+            }
+            if (lineInt > 0 && lineInt < (workables.size() + 1)) {
+                workables.get(lineInt - 1).working();
+            }
+        }catch (NumberFormatException ex) {
+            System.out.println("Неверно введен символ");
         }
     }
 
     private void registration() throws SQLException {
         try {
-            System.out.println("Введите логин: ");
-            String login = scanner.nextLine();
-            System.out.println("Введите пароль: ");
-            String password = scanner.nextLine();
-            System.out.println("Введите Фамилию: ");
-            String lastName = scanner.nextLine();
-            System.out.println("Введите Имя: ");
-            String firstName = scanner.nextLine();
-            System.out.println("Введите Отчество: ");
-            String surname = scanner.nextLine();
-            System.out.println("Введите Возраст: ");
-            int age = new Integer(scanner.nextLine());
-
+            String login = ConsoleWorker.getString("Введите логин: ");
+            String password = ConsoleWorker.getString("Введите пароль: ");
+            String lastName = ConsoleWorker.getString("Введите Фамилию: ");
+            String firstName = ConsoleWorker.getString("Введите Имя: ");
+            String surname = ConsoleWorker.getString("Введите Отчество: ");
+            int age = ConsoleWorker.getInt("Введите Возраст: ");
             facade.createAccount(login, password, lastName, firstName, surname, age);
+
         } catch (UserAlreadyExistException ex) {
             System.out.println(ex.getMessage());
         } catch (NumberFormatException ex) {
@@ -118,11 +111,9 @@ public class ConsoleInterface {
     }
 
     private void authorization() throws SQLException {
-        System.out.println("Введите логин: ");
-        String login = scanner.nextLine();
-        System.out.println("Введите пароль: ");
-        String password = scanner.nextLine();
         try {
+            String login = ConsoleWorker.getString("Введите логин: ");
+            String password = ConsoleWorker.getString("Введите пароль: ");
             facade.login(login, password);
         } catch (UserNotFoundException | NotCorrectPasswordException ex) {
             System.out.println(ex.getMessage());

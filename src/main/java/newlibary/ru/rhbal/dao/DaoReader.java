@@ -35,8 +35,12 @@ public class DaoReader extends AbstractDao<Reader>{
 
     @Override
     public String getUpdateSqlQuery(Reader entity) {
-        return "UPDATE "+getTableName()+" SET "+getColumnLogin()+"= '"+entity.getLogin()+"', '"+getColumnPassword()+"= '"+entity.getPassword()+
-                "', '"+getColumnFirstName()+"= '"+entity.getFirstName()+"', "+getColumnSurname()+"= '"+entity.getSurname()+"', "
+        if(entity.getLogin()==null || entity.getPassword()==null)
+            return "UPDATE "+getTableName()+" SET "+getColumnFirstName()+"= '"+entity.getFirstName()+"', "+getColumnSurname()+"= '"+entity.getSurname()+"', "
+                +getColumnLastName()+"= '"+entity.getLastName()+"', "+getColumnAge()+"="+entity.getAge()+" WHERE id="+entity.getId();
+        
+        return "UPDATE "+getTableName()+" SET "+getColumnLogin()+"= '"+entity.getLogin()+"', "+getColumnPassword()+"= '"+entity.getPassword()+
+                "', "+getColumnFirstName()+"= '"+entity.getFirstName()+"', "+getColumnSurname()+"= '"+entity.getSurname()+"', "
                 +getColumnLastName()+"= '"+entity.getLastName()+"', "+getColumnAge()+"="+entity.getAge()+" WHERE id="+entity.getId();
     }
 
